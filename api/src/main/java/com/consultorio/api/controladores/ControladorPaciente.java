@@ -23,9 +23,8 @@ public class ControladorPaciente {
     @GetMapping()
     public ResponseEntity<List<Paciente>> busca(@RequestParam(required = false) String nombrePaciente){
         try {
-            List<Paciente> pacientes = new ArrayList<Paciente>();
 
-            pacientes.addAll((nombrePaciente == null || nombrePaciente.isBlank()) ? repositorioPacientes.findAll() : repositorioPacientes.findPacienteByNombrePaciente(nombrePaciente));
+            List<Paciente> pacientes = new ArrayList<>((nombrePaciente == null || nombrePaciente.isBlank()) ? repositorioPacientes.findAll() : repositorioPacientes.findPacienteByNombrePaciente(nombrePaciente));
 
             if(pacientes.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -41,7 +40,7 @@ public class ControladorPaciente {
     @GetMapping("/id")
     ResponseEntity<Paciente> buscaPorId(@RequestParam Integer idPaciente){
         try {
-            Optional<Paciente> paciente = repositorioPacientes.findById(idPaciente);
+            Optional<Paciente> paciente = repositorioPacientes.pacienteConHistoria(idPaciente);
 
             if(paciente.isPresent()){
                 return new ResponseEntity<>(paciente.get(), HttpStatus.OK);

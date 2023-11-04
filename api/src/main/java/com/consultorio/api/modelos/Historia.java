@@ -1,45 +1,74 @@
 package com.consultorio.api.modelos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "historias")
 public class Historia {
-    int id_historia;
-    int id_paciente;
-    String documento_historia;
+    @Id
+    @Column(name = "id_historia")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int idHistoria;
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+        this.idPaciente = paciente.getIdPaciente();
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id_paciente", insertable = false, updatable = false)
+    @JsonIgnore
+    private Paciente paciente;
+
+    @Column(name = "id_paciente", insertable = false)
+    @JsonIgnore
+    int idPaciente;
+
+    @GeneratedValue
+    @Column(name = "documento_historia")
+    String documentoHistoria;
 
     public Historia() {
     }
 
-    public Historia(int id_historia, int id_paciente, String documento_historia) {
-        this.id_historia = id_historia;
-        this.id_paciente = id_paciente;
-        this.documento_historia = documento_historia;
+    public Historia(int idHistoria, int idPaciente, String documentoHistoria) {
+        this.idHistoria = idHistoria;
+//        this.idPaciente = idPaciente;
+        this.documentoHistoria = documentoHistoria;
     }
 
-    public Historia(int id_paciente, String documento_historia) {
-        this.id_paciente = id_paciente;
-        this.documento_historia = documento_historia;
+    public Historia(int idPaciente, String documentoHistoria) {
+//        this.idPaciente = idPaciente;
+        this.documentoHistoria = documentoHistoria;
     }
 
-    public int getId_historia() {
-        return id_historia;
+    public int getIdHistoria() {
+        return idHistoria;
     }
 
-    public void setId_historia(int id_historia) {
-        this.id_historia = id_historia;
+    public void setIdHistoria(int idHistoria) {
+        this.idHistoria = idHistoria;
     }
 
-    public int getId_paciente() {
-        return id_paciente;
+    public int getIdPaciente() {
+        return paciente.getIdPaciente();
     }
 
-    public void setId_paciente(int id_paciente) {
-        this.id_paciente = id_paciente;
+//    public void setIdPaciente(int idPaciente) {
+//        this.idPaciente = idPaciente;
+//    }
+
+    public String getDocumentoHistoria() {
+        return documentoHistoria;
     }
 
-    public String getDocumento_historia() {
-        return documento_historia;
-    }
-
-    public void setDocumento_historia(String documento_historia) {
-        this.documento_historia = documento_historia;
+    public void setDocumentoHistoria(String documento_historia) {
+        this.documentoHistoria = documento_historia;
     }
 }

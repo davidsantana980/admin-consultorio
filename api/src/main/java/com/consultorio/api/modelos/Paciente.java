@@ -2,6 +2,8 @@ package com.consultorio.api.modelos;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "pacientes")
 public class Paciente {
@@ -22,6 +24,28 @@ public class Paciente {
 
     @Column(name = "telefono_paciente", nullable = true)
     private String telefonoPaciente;
+
+    @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private Historia historia;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private List<Cita> citas;
+
+    public List<Cita> getCitas() {
+        return citas;
+    }
+
+    public void setCitas(List<Cita> citas) {
+        this.citas = citas;
+    }
+
+    public Historia getHistoria() {
+        return historia;
+    }
+
+    public void setHistoria(Historia historia) {
+        this.historia = historia;
+    }
 
     public Paciente() {
     }
