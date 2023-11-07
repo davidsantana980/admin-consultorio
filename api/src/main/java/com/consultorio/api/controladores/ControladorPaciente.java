@@ -17,8 +17,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/api/pacientes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ControladorPaciente {
-    @Autowired
     RepositorioPacientes repositorioPacientes;
+
+    @Autowired
+    ControladorPaciente(RepositorioPacientes repositorioPacientes){
+        this.repositorioPacientes = repositorioPacientes;
+    }
 
     @GetMapping()
     public ResponseEntity<List<Paciente>> busca(@RequestParam(required = false) String nombrePaciente){

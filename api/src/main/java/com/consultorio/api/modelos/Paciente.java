@@ -7,7 +7,6 @@ import java.util.List;
 @Entity
 @Table(name = "pacientes")
 public class Paciente {
-
     @Id
     @Column(name = "id_paciente")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class Paciente {
     @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL)
     private Historia historia;
 
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "paciente")
     private List<Cita> citas;
 
     public List<Cita> getCitas() {

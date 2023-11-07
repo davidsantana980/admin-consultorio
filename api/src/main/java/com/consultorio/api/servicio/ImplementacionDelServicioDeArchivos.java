@@ -14,12 +14,13 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 @Service
-public class ImplementacionDelServicio implements ServicioDeArchivos{
-    private final Path raiz = Paths.get("cargas");
+public class ImplementacionDelServicioDeArchivos implements ServicioDeArchivos{
+    private Path raiz;
 
     @Override
-    public void init(){
+    public void init(String directorio){
         try {
+            raiz = Paths.get(directorio);
             Files.createDirectories(raiz);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -93,3 +94,4 @@ public class ImplementacionDelServicio implements ServicioDeArchivos{
 //        }
 //    }
 }
+

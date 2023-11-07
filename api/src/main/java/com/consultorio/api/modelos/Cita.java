@@ -3,44 +3,50 @@ package com.consultorio.api.modelos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "citas")
 public class Cita {
     @Id
-    @Column(name = "id_cita")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    int idCita;
+    @Column(name = "id_cita", insertable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer idCita;
 
-    @Column(name = "id_paciente", insertable = false)
+    @Column(name = "id_paciente", updatable = false, insertable = false)
     @JsonIgnore
     int idPaciente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "id_paciente", insertable = false, updatable = false)
+    @JoinColumn(name = "id_paciente")
     @JsonIgnore
     private Paciente paciente;
 
-    @GeneratedValue
     @Column(name = "fecha_cita", columnDefinition = "DATE")
-    Date fechaCita;
+    LocalDate fechaCita;
 
-    @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cita")
     private List<Estudio> estudios;
+
+    public List<Estudio> getEstudios() {
+        return estudios;
+    }
+
+    public void setEstudios(List<Estudio> estudios) {
+        this.estudios = estudios;
+    }
 
     public Cita() {
     }
 
-    public Cita(int idCita, int idPaciente, Date fechaCita) {
+    public Cita(int idCita, int idPaciente, LocalDate fechaCita) {
         this.idCita = idCita;
         this.idPaciente = idPaciente;
         this.fechaCita = fechaCita;
     }
 
-    public Cita(int idPaciente, Date fechaCita) {
+    public Cita(int idPaciente, LocalDate fechaCita) {
         this.idPaciente = idPaciente;
         this.fechaCita = fechaCita;
     }
@@ -51,15 +57,14 @@ public class Cita {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
-//        this.idPaciente = paciente.getIdPaciente();
+        this.idPaciente = paciente.getIdPaciente();
     }
 
-
-    public int getIdCita() {
+    public Integer getIdCita() {
         return idCita;
     }
 
-    public void setIdCita(int idCita) {
+    public void setIdCita(Integer idCita) {
         this.idCita = idCita;
     }
 
@@ -67,15 +72,15 @@ public class Cita {
         return idPaciente;
     }
 
-//    public void setIdPaciente(int idPaciente) {
-//        this.idPaciente = idPaciente;
-//    }
+    public void setIdPaciente(int idPaciente) {
+        this.idPaciente = idPaciente;
+    }
 
-    public Date getFechaCita() {
+    public LocalDate getFechaCita() {
         return fechaCita;
     }
 
-    public void setFechaCita(Date fechaCita) {
+    public void setFechaCita(LocalDate fechaCita) {
         this.fechaCita = fechaCita;
     }
 }

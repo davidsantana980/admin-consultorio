@@ -15,23 +15,30 @@ public class Estudio {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "id_cita", insertable = false, updatable = false)
+    @JoinColumn(name = "id_cita")
     @JsonIgnore
     private Cita cita;
 
-    @Column(name = "id_cita", insertable = false)
+    @Column(name = "id_cita", insertable = false, updatable = false)
     @JsonIgnore
     int idCita;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId
-    @JoinColumn(name = "id_tipo_estudio", insertable = false, updatable = false)
+    @JoinColumn(name = "id_tipo_estudio")
     private TipoDeEstudio tipoDeEstudio;
 
-    @Column(name = "id_tipo_estudio", insertable = false)
+    public TipoDeEstudio getTipoDeEstudio() {
+        return tipoDeEstudio;
+    }
+
+    public void setTipoDeEstudio(TipoDeEstudio tipoDeEstudio) {
+        this.tipoDeEstudio = tipoDeEstudio;
+        this.idTipoEstudio = tipoDeEstudio.getIdTipoEstudio();
+    }
+
+    @Column(name = "id_tipo_estudio", insertable = false, updatable = false)
     @JsonIgnore
-    int tipoEstudio;
+    Integer idTipoEstudio;
 
     public Cita getCita() {
         return cita;
@@ -39,6 +46,7 @@ public class Estudio {
 
     public void setCita(Cita cita) {
         this.cita = cita;
+        this.idCita = cita.getIdCita();
     }
 
     @Column(name = "notas_estudio")
@@ -47,16 +55,16 @@ public class Estudio {
     public Estudio() {
     }
 
-    public Estudio(int idEstudio, int idCita, int tipoEstudio, String notasEstudio) {
+    public Estudio(int idEstudio, int idCita, int idTipoEstudio, String notasEstudio) {
         this.idEstudio = idEstudio;
-        this.idCita = idCita;
-        this.tipoEstudio = tipoEstudio;
+//        this.idCita = idCita;
+        this.idTipoEstudio = idTipoEstudio;
         this.notasEstudio = notasEstudio;
     }
 
-    public Estudio(int idCita, int tipoEstudio, String notasEstudio) {
-        this.idCita = idCita;
-        this.tipoEstudio = tipoEstudio;
+    public Estudio(int idCita, int idTipoEstudio, String notasEstudio) {
+//        this.idCita = idCita;
+        this.idTipoEstudio = idTipoEstudio;
         this.notasEstudio = notasEstudio;
     }
 
@@ -76,12 +84,12 @@ public class Estudio {
         this.idCita = idCita;
     }
 
-    public int getTipoEstudio() {
-        return tipoEstudio;
+    public Integer getIdTipoEstudio() {
+        return idTipoEstudio;
     }
 
-    public void setTipoEstudio(int tipoEstudio) {
-        this.tipoEstudio = tipoEstudio;
+    public void setIdTipoEstudio(Integer tipoEstudio) {
+        this.idTipoEstudio = tipoEstudio;
     }
 
     public String getNotasEstudio() {
@@ -93,42 +101,3 @@ public class Estudio {
     }
 }
 
-@Entity
-@Table(name = "tipos_estudio")
-class TipoDeEstudio{
-    @Id
-    @Column(name = "id_tipo_estudio")
-    int idEstudio;
-
-    @OneToMany(mappedBy = "tipoDeEstudio", cascade = CascadeType.ALL)
-//    @Column(name = "id_tipo_estudio")
-    @JsonIgnore
-    private List<Estudio> estudioSet;
-
-    @Column(name = "nombre_tipo")
-    String nombreTipo;
-
-    public int getIdEstudio() {
-        return idEstudio;
-    }
-
-    public void setIdEstudio(int idEstudio) {
-        this.idEstudio = idEstudio;
-    }
-
-//    public List<Estudio> getEstudioSet() {
-//        return estudioSet;
-//    }
-//
-//    public void setEstudioSet(List<Estudio> estudioSet) {
-//        this.estudioSet = estudioSet;
-//    }
-
-    public String getNombreTipo() {
-        return nombreTipo;
-    }
-
-    public void setNombreTipo(String nombreTipo) {
-        this.nombreTipo = nombreTipo;
-    }
-}

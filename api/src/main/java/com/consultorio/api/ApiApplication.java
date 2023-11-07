@@ -15,9 +15,9 @@ public class ApiApplication {
 		SpringApplication.run(ApiApplication.class, args);
 	}
 
-	public void run(String... arg) throws Exception {
-//    storageService.deleteAll();
-		servicioDeArchivos.init();
-	}
+//	public void run(String... arg) throws Exception {
+////    storageService.deleteAll();
+//		servicioDeArchivos.init();
+//	}
 
 }
