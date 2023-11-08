@@ -9,6 +9,7 @@ import com.consultorio.api.repositorios.RepositorioPacientes;
 import com.consultorio.api.repositorios.RepositorioTiposDeEstudio;
 import com.consultorio.api.servicio.ImplementacionDelServicioDeArchivos;
 import com.consultorio.api.servicio.ServicioDeArchivos;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RestController
@@ -82,7 +85,7 @@ public class ControladorCita {
 
     @PostMapping()
 //    @Transactional
-    public ResponseEntity<Cita> guardarCita(@RequestParam Integer idPaciente, @RequestParam Integer tipoDeEstudio, @RequestBody MultipartFile archivoEstudio){
+    public ResponseEntity<Cita> guardarCita(@RequestParam Integer idPaciente, @ModelAttribute Optional<EstudioAux> estudioAux){
         try {
             Paciente paciente = repositorioPacientes.findById(idPaciente).orElseThrow(() -> new Exception("Paciente no hallado"));
 
@@ -94,17 +97,18 @@ public class ControladorCita {
 
             Cita citaCreada = repositorioCitas.save(citaACrear);
 
-            if(!archivoEstudio.isEmpty()){
-                String url = guardarEstudio(archivoEstudio);
+            List<Estudio> nuevoEstudioLista = new ArrayList<>();
 
+            estudioAux.ifPresent(estudioAux1 -> {
                 Estudio nuevoEstudio = new Estudio();
 
-                nuevoEstudio.setCita(citaCreada);
-                nuevoEstudio.setNotasEstudio(url);
-                nuevoEstudio.setTipoDeEstudio(repositorioTiposDeEstudio.findById(tipoDeEstudio).orElseThrow());
+                nuevoEstudio.setIdTipoEstudio(estudioAux1.getTipoDeEstudio());
+                nuevoEstudio.setArchivoEstudio(estudioAux1.getArchivoEstudio());
 
-                repositorioEstudios.save(nuevoEstudio);
-            }
+                nuevoEstudioLista.add(guardarEstudio(nuevoEstudio, citaCreada));
+            });
+
+            citaCreada.setEstudios(nuevoEstudioLista);
 
             return new ResponseEntity<>(citaCreada, HttpStatus.CREATED);
         }catch (Exception e){
@@ -114,7 +118,67 @@ public class ControladorCita {
         }
     }
 
-    private String guardarEstudio(MultipartFile archivo){
+    @PutMapping("/agregar-estudio")
+    private ResponseEntity<Cita> agregaEstudio(@RequestParam Integer idCita, @ModelAttribute Optional<EstudioAux> estudioAux){
+        try {
+            Cita cita = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("Cita no hallada"));
+
+            estudioAux.ifPresent(estudioAux1 -> {
+                Estudio nuevoEstudio = new Estudio();
+
+                nuevoEstudio.setIdTipoEstudio(estudioAux1.getTipoDeEstudio());
+                nuevoEstudio.setArchivoEstudio(estudioAux1.getArchivoEstudio());
+
+                guardarEstudio(nuevoEstudio, cita);
+            });
+
+            Cita citaModificada = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("La cita no fue encontrada despues del intento de modificarla"));
+            return new ResponseEntity<>(citaModificada, HttpStatus.CREATED);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("No se pudo agregar el estudio. Error: " + e.getMessage());
+            return new ResponseEntity<>(null ,HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @DeleteMapping("/borra-estudio")
+    private ResponseEntity<Cita> borraEstudio(@RequestParam Integer idCita, @RequestParam Integer idEstudio){
+        try {
+            Cita cita = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("Cita no hallada"));
+            Optional<Estudio> estudio = repositorioEstudios.findById(idEstudio);
+
+            estudio.ifPresent(estudioAux -> {
+                repositorioEstudios.deleteById(idEstudio);
+            });
+
+            Cita citaModificada = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("La cita no fue encontrada despues del intento de modificarla"));
+            return new ResponseEntity<>(citaModificada, HttpStatus.CREATED);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("No se pudo eliminar el estudio. Error: " + e.getMessage());
+            return new ResponseEntity<>(null ,HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @DeleteMapping()
+    @Transactional
+    public ResponseEntity<String> borraCita(@RequestParam Integer idCita){
+        try {
+            Cita cita = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("Cita no hallada"));
+
+
+            repositorioEstudios.deleteAllByIdCita(cita.getIdCita());
+            repositorioCitas.deleteById(cita.getIdCita());
+
+            return new ResponseEntity<>("cita borrada exitosamente", HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("No se pudo eliminar la cita. Error: " + e.getMessage());
+            return new ResponseEntity<>(null ,HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    private String guardarDocumentoEstudio(MultipartFile archivo){
         try {
             servicioDeArchivos.guardar(archivo);
 
@@ -122,6 +186,42 @@ public class ControladorCita {
             return MvcUriComponentsBuilder.fromMethodName(ControladorCita.class, "obtenerArchivoEstudio", nuevoNombre).build().toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private Estudio guardarEstudio(Estudio estudio, Cita citaCreada){
+        String url = guardarDocumentoEstudio(estudio.getArchivoEstudio());
+
+        Estudio nuevoEstudio = new Estudio();
+
+        nuevoEstudio.setCita(citaCreada);
+        nuevoEstudio.setNotasEstudio(url);
+        nuevoEstudio.setTipoDeEstudio(repositorioTiposDeEstudio.findById(estudio.getIdTipoEstudio()).get());
+
+        return repositorioEstudios.save(nuevoEstudio);
+    }
+
+    private class EstudioAux{
+        private Integer tipoDeEstudio;
+        private MultipartFile archivoEstudio;
+
+        public EstudioAux() {
+        }
+
+        public Integer getTipoDeEstudio() {
+            return tipoDeEstudio;
+        }
+
+        public void setTipoDeEstudio(Integer tipoDeEstudio) {
+            this.tipoDeEstudio = tipoDeEstudio;
+        }
+
+        public MultipartFile getArchivoEstudio() {
+            return archivoEstudio;
+        }
+
+        public void setArchivoEstudio(MultipartFile archivoEstudio) {
+            this.archivoEstudio = archivoEstudio;
         }
     }
 }

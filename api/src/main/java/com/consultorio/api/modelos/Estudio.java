@@ -2,8 +2,7 @@ package com.consultorio.api.modelos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "estudios")
@@ -13,19 +12,40 @@ public class Estudio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int idEstudio;
 
+    @Column(name = "id_cita", insertable = false, updatable = false)
+    @JsonIgnore
+    int idCita;
+
+    @Column(name = "notas_estudio")
+    String notasEstudio;
+
+    @Column(name = "id_tipo_estudio", insertable = false, updatable = false)
+    @JsonIgnore
+    Integer idTipoEstudio;
+
+    @Transient
+    @JsonIgnore
+    private MultipartFile archivoEstudio;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_tipo_estudio")
+    private TipoDeEstudio tipoDeEstudio;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cita")
     @JsonIgnore
     private Cita cita;
 
-    @Column(name = "id_cita", insertable = false, updatable = false)
-    @JsonIgnore
-    int idCita;
+    public Estudio() {
+    }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_tipo_estudio")
-    private TipoDeEstudio tipoDeEstudio;
+    public MultipartFile getArchivoEstudio() {
+        return archivoEstudio;
+    }
+
+    public void setArchivoEstudio(MultipartFile archivoEstudio) {
+        this.archivoEstudio = archivoEstudio;
+    }
 
     public TipoDeEstudio getTipoDeEstudio() {
         return tipoDeEstudio;
@@ -36,10 +56,6 @@ public class Estudio {
         this.idTipoEstudio = tipoDeEstudio.getIdTipoEstudio();
     }
 
-    @Column(name = "id_tipo_estudio", insertable = false, updatable = false)
-    @JsonIgnore
-    Integer idTipoEstudio;
-
     public Cita getCita() {
         return cita;
     }
@@ -47,25 +63,6 @@ public class Estudio {
     public void setCita(Cita cita) {
         this.cita = cita;
         this.idCita = cita.getIdCita();
-    }
-
-    @Column(name = "notas_estudio")
-    String notasEstudio;
-
-    public Estudio() {
-    }
-
-    public Estudio(int idEstudio, int idCita, int idTipoEstudio, String notasEstudio) {
-        this.idEstudio = idEstudio;
-//        this.idCita = idCita;
-        this.idTipoEstudio = idTipoEstudio;
-        this.notasEstudio = notasEstudio;
-    }
-
-    public Estudio(int idCita, int idTipoEstudio, String notasEstudio) {
-//        this.idCita = idCita;
-        this.idTipoEstudio = idTipoEstudio;
-        this.notasEstudio = notasEstudio;
     }
 
     public int getIdEstudio() {

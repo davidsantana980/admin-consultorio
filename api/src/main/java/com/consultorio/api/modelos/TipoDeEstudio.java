@@ -13,7 +13,6 @@ public class TipoDeEstudio {
     int idTipoEstudio;
 
     @OneToMany(mappedBy = "tipoDeEstudio")
-    @Column(name = "id_tipo_estudio")
     @JsonIgnore
     private List<Estudio> estudioSet;
 

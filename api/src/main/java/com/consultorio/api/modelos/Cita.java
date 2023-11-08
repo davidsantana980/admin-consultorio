@@ -18,13 +18,13 @@ public class Cita {
     @JsonIgnore
     int idPaciente;
 
+    @Column(name = "fecha_cita", columnDefinition = "DATE")
+    LocalDate fechaCita;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente")
     @JsonIgnore
     private Paciente paciente;
-
-    @Column(name = "fecha_cita", columnDefinition = "DATE")
-    LocalDate fechaCita;
 
     @OneToMany(mappedBy = "cita")
     private List<Estudio> estudios;
@@ -38,17 +38,6 @@ public class Cita {
     }
 
     public Cita() {
-    }
-
-    public Cita(int idCita, int idPaciente, LocalDate fechaCita) {
-        this.idCita = idCita;
-        this.idPaciente = idPaciente;
-        this.fechaCita = fechaCita;
-    }
-
-    public Cita(int idPaciente, LocalDate fechaCita) {
-        this.idPaciente = idPaciente;
-        this.fechaCita = fechaCita;
     }
 
     public Paciente getPaciente() {

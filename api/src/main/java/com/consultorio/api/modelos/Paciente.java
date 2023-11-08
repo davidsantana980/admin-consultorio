@@ -49,14 +49,6 @@ public class Paciente {
     public Paciente() {
     }
 
-    public Paciente(Integer idPaciente, String nombrePaciente, String apellidoPaciente, String cedulaPaciente, String telefonoPaciente) {
-        this.idPaciente = idPaciente;
-        this.nombrePaciente = nombrePaciente;
-        this.apellidoPaciente = apellidoPaciente;
-        this.cedulaPaciente = cedulaPaciente;
-        this.telefonoPaciente = telefonoPaciente;
-    }
-
     public Paciente(String nombrePaciente, String apellidoPaciente, String cedulaPaciente, String telefonoPaciente) {
         this.nombrePaciente = nombrePaciente;
         this.apellidoPaciente = apellidoPaciente;
