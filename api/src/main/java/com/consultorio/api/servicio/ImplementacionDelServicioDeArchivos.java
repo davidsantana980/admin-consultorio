@@ -1,10 +1,12 @@
 package com.consultorio.api.servicio;
 
+import com.consultorio.api.modelos.Documento;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,15 +29,28 @@ public class ImplementacionDelServicioDeArchivos implements ServicioDeArchivos{
         }
     }
 
-    @Override
-    public void guardar(MultipartFile archivo){
+    private void guardarArchivo(Documento documento){
         try {
 //            Files.copy(archivo.getInputStream(), this.raiz.resolve(archivo.getOriginalFilename()));
-            Files.write(this.raiz.resolve(archivo.getOriginalFilename().replaceAll("\\s+", "_")), archivo.getBytes());
+            Files.write(this.raiz.resolve(documento.getNombre()), documento.getArchivo().getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public String guardar(Documento archivo, Class<?> claseDelControlador, String nombreDelMetodo) {
+        try {
+            archivo.ajustaNombreParaGuardar();
+            this.guardarArchivo(archivo);
+
+            String nuevoNombre = archivo.getNombre();
+            return MvcUriComponentsBuilder.fromMethodName(claseDelControlador, nombreDelMetodo, nuevoNombre).build().toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public Resource cargar(String nombreDelArchivo) {

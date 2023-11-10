@@ -1,5 +1,6 @@
 package com.consultorio.api.controladores;
 
+import com.consultorio.api.modelos.Documento;
 import com.consultorio.api.modelos.Historia;
 import com.consultorio.api.modelos.Paciente;
 import com.consultorio.api.repositorios.RepositorioHistorias;
@@ -16,12 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @Controller
 @RestController
 @RequestMapping(value = "/api/historias", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -114,12 +115,16 @@ public class ControladorHistoria {
         try {
             Paciente paciente = repositorioPacientes.findById(idPaciente).orElseThrow(() -> new Exception("Paciente no hallado"));
 
+            Documento historia = new Documento(archivo, archivo.getOriginalFilename());
+            historia.ajustaNombreParaGuardar();
+
             Historia historiaACrear = new Historia();
             historiaACrear.setPaciente(paciente);
+            historiaACrear.setNombreDocumentoHistoria(historia.getNombre());
 
-            String url = this.guardarHistoria(archivo);
+            String url = this.guardarHistoria(historia);
+            historiaACrear.setUrlDocumentoHistoria(url);
 
-            historiaACrear.setDocumentoHistoria(url);
             Historia historiaCreada = repositorioHistorias.save(historiaACrear);
 
             return new ResponseEntity<>(historiaCreada ,HttpStatus.CREATED);
@@ -132,21 +137,26 @@ public class ControladorHistoria {
 
     @PutMapping()
     @Transactional
-    public ResponseEntity<Historia> historiaModificada(@RequestParam int idHistoria, @RequestBody MultipartFile nuevoArchivo){
+    public ResponseEntity<Historia> historiaModificada(@RequestParam int idHistoria, @RequestBody MultipartFile archivo){
         try{
             Historia historiaEditada = repositorioHistorias.findById(idHistoria).orElseThrow(() -> new Exception("Historia no hallada"));
 
-            String url = this.guardarHistoria(nuevoArchivo);
+            Documento nuevoDocumento = new Documento(archivo, archivo.getOriginalFilename());
+            nuevoDocumento.ajustaNombreParaGuardar();
 
-            if(!historiaEditada.getDocumentoHistoria().equals(url)){
-                historiaEditada.setDocumentoHistoria(url);
-                historiaEditada = repositorioHistorias.save(historiaEditada);
+            servicioDeArchivos.borrar(historiaEditada.getNombreDocumentoHistoria());
+            String url = this.guardarHistoria(nuevoDocumento);
+
+            if(!historiaEditada.getUrlDocumentoHistoria().equals(url)){
+                historiaEditada.setUrlDocumentoHistoria(url);
+                historiaEditada.setNombreDocumentoHistoria(nuevoDocumento.getNombre());
             }
 
+            historiaEditada = repositorioHistorias.save(historiaEditada);
             return new ResponseEntity<>(historiaEditada ,HttpStatus.CREATED);
         }catch (Exception e){
             e.printStackTrace();
-            System.out.println("No se pudo guardar el archivo: " + nuevoArchivo.getOriginalFilename() + ". Error: " + e.getMessage());
+            System.out.println("No se pudo guardar el archivo: " + archivo.getOriginalFilename() + ". Error: " + e.getMessage());
             return new ResponseEntity<>(null ,HttpStatus.EXPECTATION_FAILED);
         }
     }
@@ -155,19 +165,15 @@ public class ControladorHistoria {
     @Transactional
     public ResponseEntity<String> borrarHistoria(@RequestParam int idHistoria){
         try {
-            //Historia historiaABorrar = repositorioHistorias.findById(idHistoria).orElseThrow();
-            //String archivo = obtenerArchivoHistoria(String.valueOf(Paths.get(historiaABorrar.getDocumentoHistoria()))).getBody().getFilename();
+            Historia historiaABorrar = repositorioHistorias.findById(idHistoria).orElseThrow();
 
-            //System.out.println(archivo);
-//            archivo.getBody().getFilename();
-
-////            String nombreDelDocumento = historiaABorrar.getDocumentoHistoria().replaceAll("/{archivoBuscado:.+}", "");
-//            if(servicioDeArchivos.borrar(String.valueOf(Paths.get(historiaABorrar.getDocumentoHistoria().)))) {
-//                repositorioHistorias.deleteByIdHistoria(idPaciente);
-                return new ResponseEntity<>("Documento borrado exitosamente." ,HttpStatus.OK);
-//            }else{
-//                throw new Exception("Error borrando el documento");
-//            }
+            String nombreDelDocumento = historiaABorrar.getNombreDocumentoHistoria();
+            if(servicioDeArchivos.borrar(nombreDelDocumento)){
+                repositorioHistorias.deleteByIdHistoria(idHistoria);
+                return new ResponseEntity<>("Documento borrado exitosamente.", HttpStatus.OK);
+            }else{
+                throw new Exception("Error borrando el documento");
+            }
         }catch (Exception e){
             e.printStackTrace();
             System.out.println("No se pudo borrar el archivo. Error: " + e.getMessage());
@@ -175,12 +181,9 @@ public class ControladorHistoria {
         }
     }
 
-    private String guardarHistoria(MultipartFile archivo){
+    private String guardarHistoria(Documento archivo){
         try {
-            servicioDeArchivos.guardar(archivo);
-
-            String nuevoNombre = archivo.getOriginalFilename().replaceAll("\\s+", "_");
-            return MvcUriComponentsBuilder.fromMethodName(ControladorHistoria.class, "obtenerArchivoHistoria", nuevoNombre).build().toString();
+            return servicioDeArchivos.guardar(archivo, ControladorHistoria.class, "obtenerArchivoHistoria");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

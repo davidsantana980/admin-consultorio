@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "citas")
 public class Cita {
     @Id
-    @Column(name = "id_cita", insertable = false)
+    @Column(name = "id_cita")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer idCita;
 

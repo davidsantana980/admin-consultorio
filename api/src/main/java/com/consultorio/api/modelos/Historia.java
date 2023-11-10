@@ -31,21 +31,24 @@ public class Historia {
     int idPaciente;
 
     @GeneratedValue
-    @Column(name = "documento_historia")
-    String documentoHistoria;
+    @Column(name = "url_documento_historia")
+    String urlDocumentoHistoria;
+
+    @Column(name = "nombre_documento")
+    String nombreDocumentoHistoria;
 
     public Historia() {
     }
 
-    public Historia(int idHistoria, int idPaciente, String documentoHistoria) {
+    public Historia(int idHistoria, int idPaciente, String urlDocumentoHistoria) {
         this.idHistoria = idHistoria;
 //        this.idPaciente = idPaciente;
-        this.documentoHistoria = documentoHistoria;
+        this.urlDocumentoHistoria = urlDocumentoHistoria;
     }
 
-    public Historia(int idPaciente, String documentoHistoria) {
+    public Historia(int idPaciente, String urlDocumentoHistoria) {
 //        this.idPaciente = idPaciente;
-        this.documentoHistoria = documentoHistoria;
+        this.urlDocumentoHistoria = urlDocumentoHistoria;
     }
 
     public int getIdHistoria() {
@@ -64,11 +67,19 @@ public class Historia {
 //        this.idPaciente = idPaciente;
 //    }
 
-    public String getDocumentoHistoria() {
-        return documentoHistoria;
+    public String getUrlDocumentoHistoria() {
+        return urlDocumentoHistoria;
     }
 
-    public void setDocumentoHistoria(String documento_historia) {
-        this.documentoHistoria = documento_historia;
+    public void setUrlDocumentoHistoria(String documento_historia) {
+        this.urlDocumentoHistoria = documento_historia;
+    }
+
+    public String getNombreDocumentoHistoria() {
+        return nombreDocumentoHistoria;
+    }
+
+    public void setNombreDocumentoHistoria(String nombreDocumentoHistoria) {
+        this.nombreDocumentoHistoria = nombreDocumentoHistoria;
     }
 }

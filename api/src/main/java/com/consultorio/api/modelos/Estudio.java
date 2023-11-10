@@ -16,12 +16,15 @@ public class Estudio {
     @JsonIgnore
     int idCita;
 
-    @Column(name = "notas_estudio")
-    String notasEstudio;
+    @Column(name = "url_notas_estudio")
+    String urlNotasEstudio;
 
     @Column(name = "id_tipo_estudio", insertable = false, updatable = false)
     @JsonIgnore
     Integer idTipoEstudio;
+
+    @Column(name = "nombre_documento")
+    private String nombreDocumentoEstudio;
 
     @Transient
     @JsonIgnore
@@ -89,12 +92,20 @@ public class Estudio {
         this.idTipoEstudio = tipoEstudio;
     }
 
-    public String getNotasEstudio() {
-        return notasEstudio;
+    public String getUrlNotasEstudio() {
+        return urlNotasEstudio;
     }
 
-    public void setNotasEstudio(String notasEstudio) {
-        this.notasEstudio = notasEstudio;
+    public void setUrlNotasEstudio(String notasEstudio) {
+        this.urlNotasEstudio = notasEstudio;
+    }
+
+    public String getNombreDocumentoEstudio() {
+        return nombreDocumentoEstudio;
+    }
+
+    public void setNombreDocumentoEstudio(String nombre_documento) {
+        this.nombreDocumentoEstudio = nombre_documento;
     }
 }
 

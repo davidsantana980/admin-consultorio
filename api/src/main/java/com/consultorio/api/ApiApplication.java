@@ -4,10 +4,11 @@ import com.consultorio.api.servicio.ServicioDeArchivos;
 import jakarta.annotation.Resource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
+//@EnableJpaRepositories("com.consultorio.api.repositorios")
 public class ApiApplication {
-
 	@Resource
 	ServicioDeArchivos servicioDeArchivos;
 
