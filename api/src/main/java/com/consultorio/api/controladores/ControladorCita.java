@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @Controller
 @RestController
 @RequestMapping(value = "/api/citas", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,7 +75,7 @@ public class ControladorCita {
     public ResponseEntity<Resource> obtenerArchivoEstudio(@PathVariable String archivoBuscado) {
         try {
             Resource archivoGuardado = servicioDeArchivos.cargar(archivoBuscado);
-            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; archivo=\"" + archivoGuardado.getFilename().replaceAll("\\s+", "_") + "\"").body(archivoGuardado);
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; archivo=\"" + archivoGuardado.getFilename() + "\"").body(archivoGuardado);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

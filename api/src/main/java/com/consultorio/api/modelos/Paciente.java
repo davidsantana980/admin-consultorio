@@ -95,4 +95,14 @@ public class Paciente {
     public void setTelefonoPaciente(String telefonoPaciente) {
         this.telefonoPaciente = telefonoPaciente;
     }
+
+    @Override
+    public String toString() {
+        return "Paciente{" +
+                "nombrePaciente='" + nombrePaciente + '\'' +
+                ", apellidoPaciente='" + apellidoPaciente + '\'' +
+                ", cedulaPaciente='" + cedulaPaciente + '\'' +
+                ", telefonoPaciente='" + telefonoPaciente + '\'' +
+                '}';
+    }
 }

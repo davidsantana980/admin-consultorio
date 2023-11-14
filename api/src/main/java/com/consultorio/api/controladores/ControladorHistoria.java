@@ -85,7 +85,7 @@ public class ControladorHistoria {
     public ResponseEntity<Resource> obtenerArchivoHistoria(@PathVariable String archivoBuscado) {
         try {
             Resource archivoGuardado = servicioDeArchivos.cargar(archivoBuscado);
-            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; archivo=\"" + archivoGuardado.getFilename().replaceAll("\\s+", "_") + "\"").body(archivoGuardado);
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; archivo=\"" + archivoGuardado.getFilename() + "\"").body(archivoGuardado);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
