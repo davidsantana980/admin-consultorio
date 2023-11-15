@@ -32,6 +32,7 @@ export default function HistoriaModal(props = {
         },
         citas : []
     },
+    rewrite : false,
     show: false
 }){
     const {paciente} = props;
@@ -39,7 +40,7 @@ export default function HistoriaModal(props = {
 
     const handleSubmit = async () => {
         try {
-            await enviarHistoria(paciente.idPaciente, historia)
+            await enviarHistoria(paciente.idPaciente, historia, props.rewrite)
             window.location.reload()
         } catch (error) {
             console.log(error)
@@ -55,8 +56,8 @@ export default function HistoriaModal(props = {
         >
             <Card>
                 <Card.Header>
-                    <Card.Title>
-                        {`Agrega o sobreescribe la historia de ${paciente.nombrePaciente} ${paciente.apellidoPaciente}`}
+                    <Card.Title className="my-2">
+                        {`${!props.rewrite ? "Agrega" : "Sobreescribe"} la historia de ${paciente.nombrePaciente} ${paciente.apellidoPaciente}`}
                     </Card.Title>
                 </Card.Header>
                 <Card.Body>

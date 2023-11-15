@@ -80,7 +80,8 @@ public class ImplementacionDelServicioDeArchivos implements ServicioDeArchivos{
 //                throw new RuntimeException("Archivo ilegible!");
 //            }
         } catch (Exception e) {
-            throw new RuntimeException("Error: " + e.getMessage());
+//            throw new RuntimeException("Error: " + e.getMessage());
+            return false;
         }
     }
 

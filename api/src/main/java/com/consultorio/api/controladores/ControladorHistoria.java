@@ -144,7 +144,12 @@ public class ControladorHistoria {
             Documento nuevoDocumento = new Documento(archivo, archivo.getOriginalFilename());
             nuevoDocumento.ajustaNombreParaGuardar();
 
-            servicioDeArchivos.borrar(historiaEditada.getNombreDocumentoHistoria());
+//            try{
+                servicioDeArchivos.borrar(historiaEditada.getNombreDocumentoHistoria());
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+
             String url = this.guardarHistoria(nuevoDocumento);
 
             if(!historiaEditada.getUrlDocumentoHistoria().equals(url)){
@@ -172,7 +177,8 @@ public class ControladorHistoria {
                 repositorioHistorias.deleteByIdHistoria(idHistoria);
                 return new ResponseEntity<>("Documento borrado exitosamente.", HttpStatus.OK);
             }else{
-                throw new Exception("Error borrando el documento");
+                repositorioHistorias.deleteByIdHistoria(idHistoria);
+                return new ResponseEntity<>("Historia borrada con errores.", HttpStatus.OK);
             }
         }catch (Exception e){
             e.printStackTrace();

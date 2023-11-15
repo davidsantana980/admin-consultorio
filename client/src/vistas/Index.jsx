@@ -1,5 +1,5 @@
 import {useState, React, Component} from "react";
-import { Container , Card, Button, Col, Row} from "react-bootstrap";
+import { Container , Card, Button, Col, Row, ButtonGroup} from "react-bootstrap";
 import PacienteModal from "../modales/PacienteModal";
 import { Link } from "react-router-dom";
 import HistoriaModal from "../modales/HistoriaModal";
@@ -16,6 +16,7 @@ export default class Index extends Component {
             },
             historiaModal : {
                 paciente : {},
+                rewrite: false, 
                 show: false
             }
         }
@@ -102,9 +103,14 @@ export default class Index extends Component {
                                 {
                                     paciente.historia 
                                     ?
-                                    <Button onClick={() => this.handleDescarga(paciente)}>
-                                        Descargar historia
-                                    </Button>
+                                    <ButtonGroup>
+                                        <Button onClick={() => this.handleDescarga(paciente)}>
+                                            Descargar historia
+                                        </Button>
+                                        <Button className="border" variant="light" onClick={() => this.setState({historiaModal : {paciente : paciente, rewrite : true, show : true}})}>
+                                            Modificar historia
+                                        </Button>
+                                    </ButtonGroup>
                                     :
                                     <Button onClick={() => this.setState({historiaModal : {paciente : paciente, show : true}})}>
                                         Agregar historia
@@ -146,8 +152,9 @@ export default class Index extends Component {
                     />
                     <HistoriaModal
                         paciente={this.state.historiaModal.paciente}
+                        rewrite={this.state.historiaModal.rewrite}
                         show = {this.state.historiaModal.show}
-                        onHide={() => this.setState({historiaModal : {paciente : {} ,  show :false}})}
+                        onHide={() => this.setState({historiaModal : {paciente : {} , rewrite : false, show :false}})}
                     />
                 </Row>
             </Container>

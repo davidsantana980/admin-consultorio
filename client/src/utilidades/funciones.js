@@ -1,12 +1,12 @@
-export function enviarHistoria(idPaciente = 0, historia = []){
+export function enviarHistoria(idPaciente = 0, historia = [], rewrite = false){
     try{
         if(!idPaciente || !historia.length) throw new Exception("error creando la historia")
 
         const formdata = new FormData();
         formdata.append("archivo", historia[0]);
 
-        return fetch(`http://localhost:8080/api/historias?idPaciente=${idPaciente}`, {
-            method: 'POST',
+        return fetch(`http://localhost:8080/api/historias?${!rewrite ? `idPaciente=${idPaciente}` : `idHistoria=${idPaciente}`}`, {
+            method: !rewrite ? "POST" : "PUT",
             body: formdata,
             // redirect: 'follow'
         })
