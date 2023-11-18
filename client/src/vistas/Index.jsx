@@ -12,6 +12,7 @@ export default class Index extends Component {
             cargando : true,
             pacienteModal : {
                 paciente : {},
+                modoForm : false,
                 show: false
             },
             historiaModal : {
@@ -148,7 +149,12 @@ export default class Index extends Component {
                     <PacienteModal 
                         paciente={this.state.pacienteModal.paciente}
                         show = {this.state.pacienteModal.show}
-                        onHide={() => this.setState({pacienteModal : {paciente : {} ,  show :false}})}
+                        modoForm={this.state.pacienteModal.modoForm}
+                        setModoForm={(val = false) => this.setState({pacienteModal : {...this.state.pacienteModal, modoForm : val}})}
+                        //oculta 
+                        onHide={() => {
+                            this.setState({pacienteModal : {...this.state.pacienteModal, show :false}})
+                        }}
                     />
                     <HistoriaModal
                         paciente={this.state.historiaModal.paciente}
