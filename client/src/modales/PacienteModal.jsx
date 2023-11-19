@@ -37,23 +37,6 @@ function borraHistoria(historia = {
     }
 }
 
-function borraPaciente(idPaciente = 0){
-    try{
-        fetch(`http://localhost:8080/api/pacientes?idPaciente=${idPaciente}`, {
-            method: 'DELETE'
-        })
-        .then(res => {
-            if(res.ok){
-                window.location.reload()
-            }else{
-                throw new Error("no se pudo borrar el paciente")
-            }
-        })
-    }catch(e){
-        console.log(e)
-    }
-}
-
 export default function PacienteModal(props = {
     paciente : pacienteModelo,
     modoForm :false,
@@ -61,14 +44,6 @@ export default function PacienteModal(props = {
     show: false
 }){
     const {paciente} = props;
-    // const {paciente : pacienteInfo1} = props;
-    // const [paciente, setPaciente] = useState(pacienteInfo1 || undefined)
-    // const [paciente, setPacienteInfo] = useState(pacienteInfo1 || undefined)
-
-    // useEffect(() => {
-    //     setPacienteInfo(pacienteInfo1)
-    //     setPaciente(pacienteInfo1)
-    // }, [props.paciente])
     
     const [advertenciaModal, setAdvertenciaModal] = useState({
         mensaje : "",
@@ -101,16 +76,13 @@ export default function PacienteModal(props = {
                         <ListGroup.Item>
                             <Card.Link>
                                 <Container className="d-flex justify-content-center">
-                                    <Button variant="danger" className="mx-2" onClick={setBorraPaciente}>
-                                        Borrar paciente
-                                    </Button>
                                     <Button variant="danger" className="mx-2" onClick={setBorraHistoria}>
                                         Borrar historia
                                     </Button>
                                     <Button variant="secondary" onClick={() => setModoForm(true)} className="mx-2">
                                         Editar datos
                                     </Button>
-                                    <Link className="btn btn-primary mx-2" to={"/citas"} replace state={{...paciente}} >
+                                    <Link className="btn btn-primary mx-2" to={"/paciente"} replace state={{...paciente}} >
                                         Ver citas
                                     </Link>
                                     {/* <Button className="mx-2">
@@ -130,16 +102,6 @@ export default function PacienteModal(props = {
             {
                 mensaje : "¿Seguro de que quieres borrar esta historia?", 
                 funcion : () => borraHistoria(paciente.historia),
-                show : true
-            }
-        )
-    }
-
-    let setBorraPaciente = () => {
-        setAdvertenciaModal(
-            {
-                mensaje : "¿Seguro de que quieres borrar este paciente?", 
-                funcion : () => borraPaciente(paciente.idPaciente),
                 show : true
             }
         )
@@ -172,7 +134,7 @@ export default function PacienteModal(props = {
                 mensaje={advertenciaModal.mensaje}
                 show = {advertenciaModal.show}
                 funcion={advertenciaModal.funcion}
-                onHide={() => setAdvertenciaModal({ mensaje : "", funcion : undefined, show : false})}
+                onHide={() => setAdvertenciaModal({ ...advertenciaModal, show : false})}
             />
         </> 
     )

@@ -3,6 +3,7 @@ import { Container , Card, Button, Col, Row, ButtonGroup} from "react-bootstrap"
 import PacienteModal from "../modales/PacienteModal";
 import { Link } from "react-router-dom";
 import HistoriaModal from "../modales/HistoriaModal";
+import { descargarArchivo } from "../utilidades/funciones";
 
 export default class Index extends Component {
     constructor(props){
@@ -67,14 +68,7 @@ export default class Index extends Component {
 
     handleDescarga(paciente = this.pacienteModelo){
         try{
-            fetch(paciente.historia.urlDocumentoHistoria)
-            .then(res => {
-                if(res.ok){
-                    window.location.assign(paciente.historia.urlDocumentoHistoria)
-                }else{
-                    throw new Error("no se pudo acceder al archivo")
-                }
-            })
+            descargarArchivo(paciente.historia.urlDocumentoHistoria)
         }catch(e){
             console.log(e)
         }
@@ -95,11 +89,12 @@ export default class Index extends Component {
                 return ( 
                     <Col lg="3" md="6"> 
                         <Card className="w-100 my-2 shadow-2-strong">
-                            <Card.Header className="btn text-center shadow-none" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
-                                <Card.Title className="mt-1">
+                            <Link className="card-header" to={`/paciente/${paciente.idPaciente}`} replace>
+                                <Card.Title className="text-center mt-1">
                                     {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`} 
                                 </Card.Title>
-                            </Card.Header>
+                            </Link>
+
                             <Card.Footer className="d-grid gap-2">
                                 {
                                     paciente.historia 
@@ -119,10 +114,10 @@ export default class Index extends Component {
                                 }
                                 {
                                     paciente.citas.length !== 0 
-                                    ?
-                                    <Link className="btn btn-dark" to={"/citas"} replace state={{...paciente}} >
-                                        Ver citas
-                                    </Link>
+                                    ? 
+                                    <Button variant="light" className="border" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
+                                        Detalles
+                                    </Button>
                                     :
                                     <Button>
                                         Agregar cita
@@ -160,7 +155,7 @@ export default class Index extends Component {
                         paciente={this.state.historiaModal.paciente}
                         rewrite={this.state.historiaModal.rewrite}
                         show = {this.state.historiaModal.show}
-                        onHide={() => this.setState({historiaModal : {paciente : {} , rewrite : false, show :false}})}
+                        onHide={() => this.setState({historiaModal : {...this.state.historiaModal, show :false}})}
                     />
                 </Row>
             </Container>

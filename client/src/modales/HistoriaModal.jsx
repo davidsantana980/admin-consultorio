@@ -4,21 +4,6 @@ import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { Link, useNavigate } from "react-router-dom";
 import { enviarHistoria } from "../utilidades/funciones";
 
-// function handleDescarga(paciente){
-//     try{
-//         fetch(paciente.historia.urlDocumentoHistoria)
-//         .then(res => {
-//             if(res.ok){
-//                 window.location.assign(paciente.historia.urlDocumentoHistoria)
-//             }else{
-//                 throw new Error("no se pudo acceder al archivo")
-//             }
-//         })
-//     }catch(e){
-//         console.log(e)
-//     }
-// }
-
 export default function HistoriaModal(props = {
     paciente : {
         idPaciente : 0,

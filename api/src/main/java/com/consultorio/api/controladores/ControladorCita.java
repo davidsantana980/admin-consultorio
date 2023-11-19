@@ -145,9 +145,8 @@ public class ControladorCita {
 
     @DeleteMapping("/borra-estudio")
     @Transactional
-    public ResponseEntity<Cita> borraEstudio(@RequestParam int idCita, @RequestParam Integer idEstudio){
+    public ResponseEntity<String> borraEstudio(@RequestParam Integer idEstudio){
         try {
-            Cita cita = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("Cita no hallada"));
             Optional<Estudio> buscaEstudio = repositorioEstudios.findById(idEstudio);
 
             buscaEstudio.ifPresent(estudio -> {
@@ -155,12 +154,10 @@ public class ControladorCita {
                 repositorioEstudios.deleteById(idEstudio);
             });
 
-            Cita citaModificada = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("La cita no fue encontrada despues del intento de modificarla"));
-            return new ResponseEntity<>(citaModificada, HttpStatus.OK);
+            return new ResponseEntity<>("Estudio borrado correctamente", HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            System.out.println("No se pudo eliminar el estudio. Error: " + e.getMessage());
-            return new ResponseEntity<>(null ,HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>("No se pudo eliminar el estudio. Error: " + e.getMessage() ,HttpStatus.EXPECTATION_FAILED);
         }
     }
 

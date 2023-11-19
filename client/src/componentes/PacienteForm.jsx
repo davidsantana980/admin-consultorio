@@ -1,5 +1,7 @@
 import { useState } from "react";
+// import {Redirect} from "react-router-dom"
 import { Button, Card, Container, Form, ListGroup } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 const pacienteModelo = {
     idPaciente : 0,
@@ -14,7 +16,7 @@ const pacienteModelo = {
     citas : []
 }
 
-function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo){
+function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo, nav = () => {}){
     try{
         return fetch(`http://localhost:8080/api/pacientes?idPaciente=${idPaciente}`, {
             method: 'PUT',
@@ -24,11 +26,15 @@ function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo){
             },              
             body : JSON.stringify(pacienteAModificar)
         })
-        .then(res => {
+        .then(async res => {
             if(res.ok){
-                return res.json()
+                let paciente = await res.json();
+
+                nav("/paciente", {state : {...paciente}})
+                
+                // return <Redirect to={"/paciente"} state={{...paciente}} />
             }else{
-                throw new Error("no se pudo borrar el paciente")
+                throw new Error("no se pudo editar")
             }
         })
     }catch(e){
@@ -49,6 +55,7 @@ export default function PacienteForm(
     const {setPacienteInfo} = props; 
     const {modoForm, setModoForm} = props;
     const [paciente, setPaciente] = useState(props.paciente)
+    const nav = useNavigate()
 
     let handleChange = (evt) => {
         const inputName = evt.target.name
@@ -94,7 +101,7 @@ export default function PacienteForm(
                                 <Button variant="primary" className="mx-2" onClick={() => setModoForm(false)}>
                                     Cancelar 
                                 </Button>
-                                <Button variant="secondary" className="mx-2" onClick={() => console.log(paciente)}>
+                                <Button variant="secondary" className="mx-2" onClick={() => editarPaciente(paciente.idPaciente, paciente, nav)}>
                                     Guardar datos
                                 </Button>
                             </Container>

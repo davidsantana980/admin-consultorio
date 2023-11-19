@@ -20,5 +20,19 @@ export function enviarHistoria(idPaciente = 0, historia = [], rewrite = false){
     }
 }
 
+export function descargarArchivo(url = ""){
+    try{
+        fetch(url)
+        .then(res => {
+            if(res.ok){
+                window.location.assign(url)
+            }else{
+                throw new Error("no se pudo acceder al archivo")
+            }
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
 
-export default {enviarHistoria}
+export default {enviarHistoria, descargarArchivo}

@@ -4,7 +4,7 @@ import App from './App.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CitasPaciente from './vistas/Citas.jsx';
+import CitasPaciente from './componentes/Citas.jsx';
 
 
 
