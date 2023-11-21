@@ -3,10 +3,20 @@ import { estudioModelo } from "../utilidades/modelos";
 import { descargarArchivo } from "../utilidades/funciones";
 import { useState } from "react";
 import AdvertenciaModal from "./AdvertenciaModal";
+import EditarEstudioForm from "../componentes/EditarEstudioForm";
 
-export default function EstudioModal(props = {estudio : estudioModelo, show : false, fecha : new Date()}){
-    const {estudio} = props;
-    const {fecha} = props;
+export default function EstudioModal(props = {
+        estudio : estudioModelo, 
+        show : false, 
+        fecha : new Date(), 
+        modoForm : false, 
+        setModoForm : () => {},
+        setEstudioInfo : () => {}
+    }
+){
+    const {estudio, fecha, setEstudioInfo} = props;
+    const {modoForm, setModoForm} = props;
+
     const [advertenciaModal, setAdvertenciaModal] = useState({
         mensaje : "",
         show : false,
@@ -15,7 +25,7 @@ export default function EstudioModal(props = {estudio : estudioModelo, show : fa
 
     const borrarEstudio = (idEstudio = 0) => {
         try{
-            fetch(`http://localhost:8080/api/citas/borra-estudio?idEstudio=${idEstudio}`, {
+            fetch(`http://localhost:8080/api/citas/estudios?idEstudio=${idEstudio}`, {
                 method: 'DELETE'
             })
             .then(res => {
@@ -67,8 +77,8 @@ export default function EstudioModal(props = {estudio : estudioModelo, show : fa
                                     <Button variant="info" className="mx-2" onClick={descargarEstudio}>
                                         Descargar archivo
                                     </Button>
-                                    <Button>
-                                        Actualizar archivo
+                                    <Button onClick={() => setModoForm(true)}>
+                                        Editar estudio
                                     </Button>
                                 </Container>
                             </Card.Link>
@@ -87,7 +97,12 @@ export default function EstudioModal(props = {estudio : estudioModelo, show : fa
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
             >
-                <EstudioInfo/>
+            {
+                !modoForm ? 
+                    <EstudioInfo/>
+                :
+                    <EditarEstudioForm estudio={estudio} setModoForm={setModoForm} setEstudioInfo={setEstudioInfo} />
+            }
             </Modal>
             <AdvertenciaModal
                 mensaje={advertenciaModal.mensaje}

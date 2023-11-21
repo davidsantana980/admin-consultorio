@@ -3,19 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AdvertenciaModal from "./AdvertenciaModal";
 import { useEffect, useState } from "react";
 import PacienteForm from "../componentes/PacienteForm";
-
-const pacienteModelo = {
-    idPaciente : 0,
-    nombrePaciente : "",
-    apellidoPaciente : "",
-    cedulaPaciente : "",
-    telefonoPaciente : "",
-    historia : {
-        idHistoria : 0,
-        urlDocumentoHistoria : ""
-    },
-    citas : []
-}
+import { pacienteModelo } from "../utilidades/modelos";
 
 function borraHistoria(historia = {
     idHistoria : 0,
@@ -83,7 +71,7 @@ export default function PacienteModal(props = {
                                         Editar datos
                                     </Button>
                                     <Link className="btn btn-primary mx-2" to={"/paciente"} replace state={{...paciente}} >
-                                        Ver citas
+                                        Estudios
                                     </Link>
                                     {/* <Button className="mx-2">
                                         Agregar cita

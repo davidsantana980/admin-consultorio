@@ -2,35 +2,29 @@ import { useState } from "react";
 // import {Redirect} from "react-router-dom"
 import { Button, Card, Container, Form, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router";
-
-const pacienteModelo = {
-    idPaciente : 0,
-    nombrePaciente : "",
-    apellidoPaciente : "",
-    cedulaPaciente : "",
-    telefonoPaciente : "",
-    historia : {
-        idHistoria : 0,
-        urlDocumentoHistoria : ""
-    },
-    citas : []
-}
+import { pacienteModelo } from "../utilidades/modelos";
 
 function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo, nav = () => {}){
     try{
+        const formdata = new FormData();
+        formdata.append("nombrePaciente", pacienteAModificar.nombrePaciente);
+        formdata.append("apellidoPaciente", pacienteAModificar.apellidoPaciente);
+        formdata.append("cedulaPaciente", pacienteAModificar.cedulaPaciente);
+        formdata.append("telefonoPaciente", pacienteAModificar.telefonoPaciente);
+
         return fetch(`http://localhost:8080/api/pacientes?idPaciente=${idPaciente}`, {
             method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },              
-            body : JSON.stringify(pacienteAModificar)
+            // headers: {
+            //     'Accept': 'application/json',
+            //     'Content-Type': 'application/json'
+            // },              
+            body : formdata
         })
         .then(async res => {
             if(res.ok){
                 let paciente = await res.json();
 
-                nav("/paciente", {state : {...paciente}})
+                nav(`/paciente/${paciente.idPaciente}`)
                 
                 // return <Redirect to={"/paciente"} state={{...paciente}} />
             }else{
@@ -46,7 +40,6 @@ function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo, nav
 export default function PacienteForm(
     props = {
         paciente : pacienteModelo,
-        // show: false,
         modoForm : false,
         setPacienteInfo : () => {},
         setModoForm : () => {}

@@ -1,7 +1,7 @@
 
 import { Routes, Route } from 'react-router'
 import './index.css'
-import NavBar from './NavBar'
+import NavBar from './componentes/NavBar.jsx'
 import CitasPaciente from './componentes/Citas.jsx'
 import Index from './vistas/Index'
 import React from 'react'

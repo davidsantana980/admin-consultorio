@@ -3,13 +3,6 @@ import { Button, Container, Form, InputGroup } from "react-bootstrap";
 import {enviarHistoria} from "../utilidades/funciones"
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 export default class AgregarPaciente extends React.Component{
-    pacienteModelo = {
-        nombrePaciente : "",
-        apellidoPaciente : "",
-        cedulaPaciente : "",
-        telefonoPaciente : "",
-    }
-
     constructor(props){
         super(props)
         this.state = {

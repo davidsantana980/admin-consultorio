@@ -59,11 +59,22 @@ public class ControladorCita {
     }
 
 
-    @GetMapping("/id")
+    @GetMapping(value = "/id", params = "idPaciente")
     ResponseEntity<List<Cita>> buscaPorIdPaciente(@RequestParam Integer idPaciente){
         try {
             List<Cita> citas = repositorioCitas.findCitasByIdPaciente(idPaciente).orElseThrow();
             return new ResponseEntity<>(citas, HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/id", params = "idCita")
+    ResponseEntity<Cita> buscaPorIdCita(@RequestParam Integer idCita){
+        try {
+            Cita cita = repositorioCitas.findById(idCita).orElseThrow();
+            return new ResponseEntity<>(cita, HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -119,7 +130,7 @@ public class ControladorCita {
         }
     }
 
-    @PutMapping("/agregar-estudio")
+    @PostMapping("/estudios")
     @Transactional
     public ResponseEntity<Cita> agregaEstudio(@RequestParam int idCita, @ModelAttribute EstudioAux estudioAux){
         try {
@@ -143,7 +154,40 @@ public class ControladorCita {
         }
     }
 
-    @DeleteMapping("/borra-estudio")
+    @PutMapping("/estudios")
+    @Transactional
+    public ResponseEntity<Cita> editaEstudio(@RequestParam int idEstudio, @ModelAttribute EstudioAux estudioAux){
+        try {
+            Estudio estudio = repositorioEstudios.findById(idEstudio).orElseThrow();
+            Cita cita = estudio.getCita();
+
+            if (estudioAux.tipoDeEstudio != null && (estudioAux.tipoDeEstudio == 1 || estudioAux.tipoDeEstudio == 2)) estudio.setTipoDeEstudio(repositorioTiposDeEstudio.findById(estudioAux.getTipoDeEstudio()).get());
+
+            if(estudioAux.archivoEstudio != null && !estudioAux.archivoEstudio.isEmpty()) {
+                Documento documento = new Documento(estudioAux.getArchivoEstudio(), estudioAux.getArchivoEstudio().getOriginalFilename());
+                documento.ajustaNombreParaGuardar();
+
+                System.out.println(documento.getArchivo().getOriginalFilename() + documento.getNombre());
+
+                servicioDeArchivos.borrar(estudio.getNombreDocumentoEstudio());
+                String url = servicioDeArchivos.guardar(documento, ControladorCita.class, "obtenerArchivoEstudio");
+
+                estudio.setNombreDocumentoEstudio(documento.getNombre());
+                estudio.setUrlNotasEstudio(url);
+
+                repositorioEstudios.save(estudio);
+            };
+
+            Cita citaModificada = repositorioCitas.findById(cita.getIdCita()).orElseThrow(() -> new Exception("La cita no fue encontrada despues del intento de modificarla"));
+            return new ResponseEntity<>(citaModificada, HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("No se pudo agregar el estudio. Error: " + e.getMessage());
+            return new ResponseEntity<>(null ,HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @DeleteMapping("/estudios")
     @Transactional
     public ResponseEntity<String> borraEstudio(@RequestParam Integer idEstudio){
         try {

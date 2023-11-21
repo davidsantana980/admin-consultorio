@@ -4,6 +4,7 @@ import PacienteModal from "../modales/PacienteModal";
 import { Link } from "react-router-dom";
 import HistoriaModal from "../modales/HistoriaModal";
 import { descargarArchivo } from "../utilidades/funciones";
+import { pacienteModelo } from "../utilidades/modelos";
 
 export default class Index extends Component {
     constructor(props){
@@ -24,34 +25,6 @@ export default class Index extends Component {
         }
     }
 
-    estudioModelo = {
-        idEstudio : 0,
-        urlNotasEstudio : "",
-        tipoDeEstudio : {
-            idTipoEstudio : 0,
-            nombreTipo : ""
-        }
-    }
-
-    citaModelo = {
-        idCita : 0,
-        fechaCita : new Date(),
-        estudios : []
-    }
-
-    pacienteModelo = {
-        idPaciente : 0,
-        nombrePaciente : "",
-        apellidoPaciente : "",
-        cedulaPaciente : "",
-        telefonoPaciente : "",
-        historia : {
-            idHistoria : 0,
-            urlDocumentoHistoria : ""
-        },
-        citas : []
-    }
-
     fetchPacientes(){
         try{
             fetch("http://localhost:8080/api/pacientes")
@@ -66,7 +39,7 @@ export default class Index extends Component {
         }
     }
 
-    handleDescarga(paciente = this.pacienteModelo){
+    handleDescarga(paciente = pacienteModelo){
         try{
             descargarArchivo(paciente.historia.urlDocumentoHistoria)
         }catch(e){
@@ -116,7 +89,7 @@ export default class Index extends Component {
                                     paciente.citas.length !== 0 
                                     ? 
                                     <Button variant="light" className="border" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
-                                        Detalles
+                                        Resumen
                                     </Button>
                                     :
                                     <Button>

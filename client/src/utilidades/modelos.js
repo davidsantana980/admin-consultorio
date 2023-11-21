@@ -26,5 +26,9 @@ export const pacienteModelo = {
     citas : []
 }
 
+export const estudioAuxModelo = {
+    tipoDeEstudio : 0,
+    archivoEstudio : []
+}
 
-export default {pacienteModelo, estudioModelo, citaModelo}
+export default {pacienteModelo, estudioModelo, citaModelo, estudioAuxModelo}

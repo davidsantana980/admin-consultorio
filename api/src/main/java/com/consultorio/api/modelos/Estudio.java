@@ -34,7 +34,7 @@ public class Estudio {
     @JoinColumn(name = "id_tipo_estudio")
     private TipoDeEstudio tipoDeEstudio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_cita")
     @JsonIgnore
     private Cita cita;

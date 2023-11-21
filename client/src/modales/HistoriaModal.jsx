@@ -56,11 +56,6 @@ export default function HistoriaModal(props = {
                                 <Form.Control onClick={handleSubmit} className="mt-2" as={Button}>
                                     Agregar
                                 </Form.Control>
-
-                                {/* <div class="input-group mb-3">
-                                    <label class="input-group-text" for="inputGroupFile01">Upload</label>
-                                    <input type="file" class="form-control" id="inputGroupFile01">
-                                </div> */}
                             </Form>
                         </ListGroup.Item>
                     </ListGroup>

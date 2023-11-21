@@ -80,7 +80,7 @@ public class ControladorPaciente {
     }
 
     @PutMapping()
-    ResponseEntity<Paciente> modifica(@RequestParam(required = true) Integer idPaciente, @RequestBody Paciente pacienteAModificar){
+    ResponseEntity<Paciente> modifica(@RequestParam(required = true) Integer idPaciente, @ModelAttribute Paciente pacienteAModificar){
         try{
             Optional<Paciente> pacienteEnBD = repositorioPacientes.findById(idPaciente);
 
