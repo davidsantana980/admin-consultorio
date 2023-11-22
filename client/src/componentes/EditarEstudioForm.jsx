@@ -41,7 +41,7 @@ export default function EditarEstudioForm(props = {
     const handleSubmit = async (evt) => {
         evt.preventDefault()
         const edit = await editarEstudio(estudio.idEstudio, estudioAux)
-        // if (edit) window.location.reload();
+        if (edit) window.location.reload();
     }
     
     return (

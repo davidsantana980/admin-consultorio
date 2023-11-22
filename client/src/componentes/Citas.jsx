@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Container, Table } from "react-bootstrap";
 import { useLocation } from "react-router";
 import { citaModelo, estudioModelo, pacienteModelo } from "../utilidades/modelos.js";
 import EstudioModal from "../modales/EstudioModal.jsx";
@@ -52,9 +52,9 @@ export default function CitasPaciente(props = {citas : [citaModelo]}){
                     let botones = cita.estudios.map(estudio => (<Button onClick={() => {setEstudioModal({show : true, estudio : estudio, fecha : cita.fechaCita})}} className="btn-outline-info m-0 mx-1" variant="light" >{estudio.tipoDeEstudio.nombreTipo}</Button>))
                 
                     return (
-                        <Container>
+                        <ButtonGroup className="w-100">
                             {botones}
-                        </Container>                    
+                        </ButtonGroup>                    
                     )
                 }
             
@@ -99,7 +99,7 @@ export default function CitasPaciente(props = {citas : [citaModelo]}){
     }
 
     return (
-        <Container>
+        <div id="citas">
             <Table responsive hover bordered striped>
                 <thead>
                     <tr className="text-center">
@@ -135,6 +135,6 @@ export default function CitasPaciente(props = {citas : [citaModelo]}){
                 mensaje={advertenciaModal.mensaje}
                 onHide={() => setAdvertenciaModal({...advertenciaModal, show:false})}
             />
-        </Container>
+        </div>
     )
 }

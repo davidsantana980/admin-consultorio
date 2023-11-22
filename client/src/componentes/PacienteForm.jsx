@@ -1,10 +1,10 @@
 import { useState } from "react";
 // import {Redirect} from "react-router-dom"
 import { Button, Card, Container, Form, ListGroup } from "react-bootstrap";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { pacienteModelo } from "../utilidades/modelos";
 
-function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo, nav = () => {}){
+function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo){
     try{
         const formdata = new FormData();
         formdata.append("nombrePaciente", pacienteAModificar.nombrePaciente);
@@ -14,18 +14,11 @@ function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo, nav
 
         return fetch(`http://localhost:8080/api/pacientes?idPaciente=${idPaciente}`, {
             method: 'PUT',
-            // headers: {
-            //     'Accept': 'application/json',
-            //     'Content-Type': 'application/json'
-            // },              
             body : formdata
         })
-        .then(async res => {
+        .then(res => {
             if(res.ok){
-                let paciente = await res.json();
-
-                nav(`/paciente/${paciente.idPaciente}`)
-                
+                return res.ok;                
                 // return <Redirect to={"/paciente"} state={{...paciente}} />
             }else{
                 throw new Error("no se pudo editar")
@@ -49,6 +42,7 @@ export default function PacienteForm(
     const {modoForm, setModoForm} = props;
     const [paciente, setPaciente] = useState(props.paciente)
     const nav = useNavigate()
+    const location = useLocation();
 
     let handleChange = (evt) => {
         const inputName = evt.target.name
@@ -94,7 +88,11 @@ export default function PacienteForm(
                                 <Button variant="primary" className="mx-2" onClick={() => setModoForm(false)}>
                                     Cancelar 
                                 </Button>
-                                <Button variant="secondary" className="mx-2" onClick={() => editarPaciente(paciente.idPaciente, paciente, nav)}>
+                                <Button variant="secondary" className="mx-2" onClick={async () => {
+                                    const ok = await editarPaciente(paciente.idPaciente, paciente)
+                                    let estaEnPaciente = /^\/paciente\/\d+$/.test(location.pathname);
+                                    if (ok) estaEnPaciente ? window.location.reload() : nav(`/paciente/${paciente.idPaciente}`)
+                                }}>
                                     Guardar datos
                                 </Button>
                             </Container>

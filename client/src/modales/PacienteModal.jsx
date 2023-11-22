@@ -4,26 +4,7 @@ import AdvertenciaModal from "./AdvertenciaModal";
 import { useEffect, useState } from "react";
 import PacienteForm from "../componentes/PacienteForm";
 import { pacienteModelo } from "../utilidades/modelos";
-
-function borraHistoria(historia = {
-    idHistoria : 0,
-    urlDocumentoHistoria : ""
-}){
-    try{
-        fetch(`http://localhost:8080/api/historias?idHistoria=${historia.idHistoria}`, {
-            method: 'DELETE'
-        })
-        .then(res => {
-            if(res.ok){
-                window.location.reload()
-            }else{
-                throw new Error("no se pudo borrar el archivo")
-            }
-        })
-    }catch(e){
-        console.log(e)
-    }
-}
+import { borraHistoria } from "../utilidades/funciones";
 
 export default function PacienteModal(props = {
     paciente : pacienteModelo,
@@ -70,8 +51,8 @@ export default function PacienteModal(props = {
                                     <Button variant="secondary" onClick={() => setModoForm(true)} className="mx-2">
                                         Editar datos
                                     </Button>
-                                    <Link className="btn btn-primary mx-2" to={"/paciente"} replace state={{...paciente}} >
-                                        Estudios
+                                    <Link className="btn btn-primary mx-2" to={`/paciente/${paciente.idPaciente}`} replace >
+                                        Citas y estudios
                                     </Link>
                                     {/* <Button className="mx-2">
                                         Agregar cita
@@ -94,14 +75,6 @@ export default function PacienteModal(props = {
             }
         )
     }
-
-    // let setEditaPaciente = async () => {
-    //     const respuesta = await editarPaciente(paciente.idPaciente, paciente) 
-    //     if(respuesta != null){
-    //         setPaciente({...respuesta})
-    //         setModoForm(false)
-    //     }
-    // }
 
     return (
         <>
