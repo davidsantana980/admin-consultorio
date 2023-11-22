@@ -2,20 +2,23 @@ import React from "react";
 import { pacienteModelo } from "../utilidades/modelos";
 import { Button, ButtonGroup, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import CitasPaciente from "../componentes/Citas.jsx";
-import { useLocation, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import AdvertenciaModal from "../modales/AdvertenciaModal.jsx";
 import { borraHistoria, descargarArchivo } from "../utilidades/funciones.js";
 import HistoriaModal from "../modales/HistoriaModal";
 import PacienteModal from "../modales/PacienteModal.jsx";
 import AgregarCitaModal from "../modales/AgregarCitaModal.jsx";
+import { Link } from "react-router-dom";
 
 class ClasePaciente extends React.Component{
     constructor(props = {
-            idPaciente : 0
+            idPaciente : 0,
+            nav : () => {}
         }
     ){
         super(props)
-        this.idPaciente = props.idPaciente
+        this.idPaciente = props.idPaciente,
+        this.nav=props.nav
         this.state = {
             paciente : pacienteModelo,
             pacienteModal : {
@@ -59,15 +62,23 @@ class ClasePaciente extends React.Component{
     
     fetchPaciente(){
         try{
+            if(!parseInt(this.idPaciente)) throw new Error("9903094182h")
+            
             fetch(`http://localhost:8080/api/pacientes/id?idPaciente=${this.idPaciente}`)
             .then(res => {
+                if (res.status == 204 || !res.ok) throw new Error()
                 return res.json()
             })
             .then((resJson) => {
+                if (!Object.values(resJson)) throw new Error()
                 this.setState({paciente : resJson})
             })
+            .catch(e => {
+                return this.nav("/", {replace : true})
+            })
+            
         }catch(e){
-            console.log(e);
+            return this.nav("/", {replace : true})
         }
     }
 
@@ -215,6 +226,9 @@ class ClasePaciente extends React.Component{
                 <AgregarCitaModal 
                     paciente={this.state.agregarCitaModal.paciente}
                     show = {this.state.agregarCitaModal.show}
+                    onHide={() => {
+                        this.setState({agregarCitaModal : {...this.state.agregarCitaModal, show :false}})
+                    }}
                 />
             </Container>
         )
@@ -223,8 +237,8 @@ class ClasePaciente extends React.Component{
 
 export default function Paciente (props){
         const {idPaciente} = useParams()
-
+        const nav = useNavigate()
         return (
-            <ClasePaciente idPaciente={idPaciente} {...props}/>
+            <ClasePaciente idPaciente={idPaciente} {...props} nav={nav}/>
         )
 }

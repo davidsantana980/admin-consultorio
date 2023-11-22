@@ -1,7 +1,7 @@
-import { Button, ButtonToolbar, Card, Col, Container, Form, ListGroup, Modal } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Button, Card, Container, ListGroup, Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import AdvertenciaModal from "./AdvertenciaModal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PacienteForm from "../componentes/PacienteForm";
 import { pacienteModelo } from "../utilidades/modelos";
 import { borraHistoria } from "../utilidades/funciones";

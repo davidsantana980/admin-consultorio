@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button, ButtonToolbar, Card, ListGroup, Modal, Form, InputGroup } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import { Link, useNavigate } from "react-router-dom";
 import { enviarHistoria } from "../utilidades/funciones";
 
 export default function HistoriaModal(props = {

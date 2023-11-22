@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { citaModelo, estudioAuxModelo, estudioModelo } from "../utilidades/modelos";
-import { Button, Card, ListGroup, Modal, Form, InputGroup } from "react-bootstrap";
-import InputGroupText from "react-bootstrap/esm/InputGroupText";
+import { citaModelo, estudioAuxModelo } from "../utilidades/modelos";
+import { Card, Modal } from "react-bootstrap";
 import { enviarEstudio } from "../utilidades/funciones";
 import AgregarEstudioForm from "../componentes/AgregarEstudioForm";
 

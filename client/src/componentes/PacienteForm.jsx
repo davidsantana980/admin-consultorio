@@ -1,7 +1,7 @@
 import { useState } from "react";
 // import {Redirect} from "react-router-dom"
 import { Button, Card, Container, Form, ListGroup } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { pacienteModelo } from "../utilidades/modelos";
 
 function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo){
@@ -42,7 +42,6 @@ export default function PacienteForm(
     const {modoForm, setModoForm} = props;
     const [paciente, setPaciente] = useState(props.paciente)
     const nav = useNavigate()
-    const location = useLocation();
 
     let handleChange = (evt) => {
         const inputName = evt.target.name

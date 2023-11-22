@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, ButtonGroup, Container, Table } from "react-bootstrap";
-import { useLocation } from "react-router";
 import { citaModelo, estudioModelo, pacienteModelo } from "../utilidades/modelos.js";
 import EstudioModal from "../modales/EstudioModal.jsx";
 import AgregarEstudioModal from "../modales/AgregarEstudioModal.jsx";

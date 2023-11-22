@@ -20,7 +20,6 @@ export default class  App extends React.Component {
         <NavBar/>
         <Routes>
           <Route path='*' element={<Index/>} />
-          {/* <Route path='/citas' element={<CitasPaciente />} /> */}
           <Route path='/agregar-paciente' element={<AgregarPaciente/>} />
           <Route path='/paciente/:idPaciente' element={<Paciente/>} />
         </Routes>

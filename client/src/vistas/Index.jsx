@@ -1,10 +1,11 @@
-import {useState, React, Component} from "react";
+import { React, Component} from "react";
 import { Container , Card, Button, Col, Row, ButtonGroup} from "react-bootstrap";
 import PacienteModal from "../modales/PacienteModal";
 import { Link } from "react-router-dom";
 import HistoriaModal from "../modales/HistoriaModal";
 import { descargarArchivo } from "../utilidades/funciones";
 import { pacienteModelo } from "../utilidades/modelos";
+import AgregarCitaModal from "../modales/AgregarCitaModal";
 
 export default class Index extends Component {
     constructor(props){
@@ -21,6 +22,10 @@ export default class Index extends Component {
                 paciente : {},
                 rewrite: false, 
                 show: false
+            },
+            agregarCitaModal : {
+                paciente : {},
+                show : false
             }
         }
     }
@@ -92,8 +97,8 @@ export default class Index extends Component {
                                         Resumen
                                     </Button>
                                     :
-                                    <Button>
-                                        Agregar cita
+                                    <Button onClick={() => {this.setState({agregarCitaModal : {paciente : paciente,show : true}})}}>
+                                        Agregar cita/estudio
                                     </Button>
                                 }
                             </Card.Footer>
@@ -129,6 +134,13 @@ export default class Index extends Component {
                         rewrite={this.state.historiaModal.rewrite}
                         show = {this.state.historiaModal.show}
                         onHide={() => this.setState({historiaModal : {...this.state.historiaModal, show :false}})}
+                    />
+                    <AgregarCitaModal 
+                        paciente={this.state.agregarCitaModal.paciente}
+                        show = {this.state.agregarCitaModal.show}
+                        onHide={() => {
+                            this.setState({agregarCitaModal : {...this.state.agregarCitaModal, show :false}})
+                        }}
                     />
                 </Row>
             </Container>

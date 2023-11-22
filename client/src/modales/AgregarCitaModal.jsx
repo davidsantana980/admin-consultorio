@@ -1,8 +1,8 @@
 import { estudioAuxModelo, pacienteModelo } from "../utilidades/modelos";
-import { Button, Card, ListGroup, Modal, Form, InputGroup } from "react-bootstrap";
-import { enviarEstudio } from "../utilidades/funciones";
+import { Card, Modal } from "react-bootstrap";
 import { useState } from "react";
 import AgregarEstudioForm from "../componentes/AgregarEstudioForm";
+import { useNavigate } from "react-router";
 
 export default function AgregarCitaModal(props = {
     show : false,
@@ -10,7 +10,12 @@ export default function AgregarCitaModal(props = {
 }){
     const {show, paciente} = props;
     const [estudioAux, setEstudioAux] = useState(estudioAuxModelo);
-    const handleSubmit = async () => {
+    const nav = useNavigate()
+    let estaEnPaciente = /^\/paciente\/\d+$/.test(location.pathname);
+
+    const handleSubmit = async (evt) => {
+        evt.preventDefault()
+
         let requestOptions = {
             method: 'POST',
         };   
@@ -25,7 +30,7 @@ export default function AgregarCitaModal(props = {
 
         let res = await fetch(`http://localhost:8080/api/citas?idPaciente=${paciente.idPaciente}`, requestOptions)
 
-        if(res.ok) return window.location.reload()
+        if(res.ok) return estaEnPaciente ? window.location.reload() : nav(`/paciente/${paciente.idPaciente}`)
         
         return false;
     }
@@ -40,7 +45,7 @@ export default function AgregarCitaModal(props = {
             <Card>
                 <Card.Header>
                     <Card.Title className="my-2">
-                        {`Opcional: Agrega un estudio para esta cita`}
+                        {`Opcional: Agrega un estudio para la nueva cita`}
                     </Card.Title>
                 </Card.Header>
                 <Card.Body>
