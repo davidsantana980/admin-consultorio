@@ -2,9 +2,11 @@ import React from "react";
 import { Button, Container, Form, InputGroup } from "react-bootstrap";
 import {enviarHistoria} from "../utilidades/funciones"
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-export default class AgregarPaciente extends React.Component{
-    constructor(props){
+import { useNavigate } from "react-router";
+class AgregarPacienteClass extends React.Component{
+    constructor(props = {nav : () => {}}){
         super(props)
+        this.nav = props.nav
         this.state = {
             paciente : {
                 nombrePaciente : "",
@@ -12,7 +14,7 @@ export default class AgregarPaciente extends React.Component{
                 cedulaPaciente : "",
                 telefonoPaciente : "",
             },
-            historia : []
+            historia : [],
         }
     }
 
@@ -46,11 +48,10 @@ export default class AgregarPaciente extends React.Component{
                 body : JSON.stringify(paciente)
             })
             .then(res => {
-                return res.json()
-            })
-            .then((resJson) => {
-                // console.log(resJson)
-                return resJson
+                if(res.ok){
+                    return res.json()
+                }
+                return false;
             })
         }catch(e){
             console.log(e)
@@ -69,9 +70,10 @@ export default class AgregarPaciente extends React.Component{
 
         try{    
             const nuevoPaciente = await this.enviarPaciente();
-            console.log(nuevoPaciente)
-            // enviarHistori
-            if(!!this.state.historia.length) await enviarHistoria(nuevoPaciente.idPaciente, this.state.historia);
+            if(nuevoPaciente != false && !!Object.values(nuevoPaciente).length){
+                if(!!this.state.historia.length) await enviarHistoria(nuevoPaciente.idPaciente, this.state.historia);
+                this.nav(`/paciente/${nuevoPaciente.idPaciente}`, {replace : true})
+            }
         }catch(e){
             console.log(e)
         }
@@ -84,8 +86,9 @@ export default class AgregarPaciente extends React.Component{
         return (
             <Container>
                 <Form name="form">
-                    <Form.Label className="display-6" >
-                            Nuevo paciente:
+                    <Form.Label className="display-4" >
+                        Nuevo paciente:
+                        <hr/>
                     </Form.Label>
                     <Form.Control type="text" placeholder="Nombre" required name="nombrePaciente" value={this.state.paciente.nombrePaciente} onChange={this.handleChange} />
                     <Form.Control type="text" placeholder="Apellido" required name="apellidoPaciente" value={this.state.paciente.apellidoPaciente} onChange={this.handleChange} />
@@ -107,4 +110,12 @@ export default class AgregarPaciente extends React.Component{
             </Container>
         )
     }
+}
+
+export default function AgregarPaciente(props){
+    const nav = useNavigate();
+
+    return(
+        <AgregarPacienteClass nav={nav}/>
+    )
 }

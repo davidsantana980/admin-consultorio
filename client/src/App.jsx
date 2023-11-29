@@ -7,6 +7,7 @@ import Index from './vistas/Index'
 import React from 'react'
 import AgregarPaciente from './vistas/AgregarPaciente'
 import Paciente from './vistas/Paciente'
+import ListaPacientes from './vistas/ListaPacientes.jsx'
 
 export default class  App extends React.Component {
   constructor(props){
@@ -22,6 +23,7 @@ export default class  App extends React.Component {
           <Route path='*' element={<Index/>} />
           <Route path='/agregar-paciente' element={<AgregarPaciente/>} />
           <Route path='/paciente/:idPaciente' element={<Paciente/>} />
+          <Route path='/resultados' element={<ListaPacientes/>} />
         </Routes>
       </>
     )

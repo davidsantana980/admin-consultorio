@@ -32,12 +32,16 @@ export default class Index extends Component {
 
     fetchPacientes(){
         try{
-            fetch("http://localhost:8080/api/pacientes")
+            fetch("http://localhost:8080/api/pacientes/busca-todo")
             .then(res => {
                 return res.json()
             })
             .then((resJson = []) => {
-                this.setState({pacientes : resJson, cargando : false})
+                if(!!resJson.length){
+                    this.setState({pacientes : resJson, cargando : false})
+                }else{
+                    return //this.nav("/agregar-paciente", {replace : true})
+                }
             })
         }catch(e){
             console.log(e);
@@ -68,7 +72,7 @@ export default class Index extends Component {
                     <Col lg="3" md="6"> 
                         <Card className="w-100 my-2 shadow-2-strong">
                             <Link className="card-header" to={`/paciente/${paciente.idPaciente}`} replace>
-                                <Card.Title className="text-center mt-1">
+                                <Card.Title className="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover text-center mt-1">
                                     {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`} 
                                 </Card.Title>
                             </Link>
@@ -86,21 +90,18 @@ export default class Index extends Component {
                                         </Button>
                                     </ButtonGroup>
                                     :
-                                    <Button onClick={() => this.setState({historiaModal : {paciente : paciente, show : true}})}>
-                                        Agregar historia
-                                    </Button>
+                                    <ButtonGroup>
+                                        <Button onClick={() => this.setState({historiaModal : {paciente : paciente, show : true}})}>
+                                            Agregar historia
+                                        </Button>
+                                        <Button onClick={() => {this.setState({agregarCitaModal : {paciente : paciente,show : true}})}}>
+                                            Agregar cita/estudio
+                                        </Button>
+                                    </ButtonGroup>
                                 }
-                                {
-                                    paciente.citas.length !== 0 
-                                    ? 
-                                    <Button variant="light" className="border" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
-                                        Resumen
-                                    </Button>
-                                    :
-                                    <Button onClick={() => {this.setState({agregarCitaModal : {paciente : paciente,show : true}})}}>
-                                        Agregar cita/estudio
-                                    </Button>
-                                }
+                                <Button variant="light" className="border" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
+                                    Resumen
+                                </Button>
                             </Card.Footer>
                         </Card>
                     </Col>
@@ -109,8 +110,11 @@ export default class Index extends Component {
 
         if(cargando){
             return (
-                <Container>
-                    <p className="display-3 text-center">Cargando...</p>
+                <Container fluid className="col-lg-8">
+                    <h1 className="display-4 mt-2 text-center">
+                        Cargando...
+                    </h1>
+                    <hr/>
                 </Container>
             )
         }

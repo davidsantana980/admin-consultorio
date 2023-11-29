@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @Controller
@@ -26,11 +27,10 @@ public class ControladorPaciente {
         this.repositorioPacientes = repositorioPacientes;
     }
 
-    @GetMapping()
-    public ResponseEntity<List<Paciente>> busca(@RequestParam(required = false) String nombrePaciente){
+    @GetMapping(path = "/busca-todo")
+    public ResponseEntity<List<Paciente>> buscaTodos(){
         try {
-
-            List<Paciente> pacientes = new ArrayList<>((nombrePaciente == null || nombrePaciente.isBlank()) ? repositorioPacientes.findAll() : repositorioPacientes.findPacienteByNombrePaciente(nombrePaciente));
+            List<Paciente> pacientes = new ArrayList<>(repositorioPacientes.findAll());
 
             if(pacientes.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -43,10 +43,36 @@ public class ControladorPaciente {
         }
     }
 
+    @GetMapping(params = {"nombrePaciente", "apellidoPaciente"})
+    public ResponseEntity<List<Paciente>> busquedaRefinada(@RequestParam(required = false) String nombrePaciente, @RequestParam(required = false) String apellidoPaciente){
+        try {
+            if(nombrePaciente != null || apellidoPaciente != null){
+                String nombreQuery= (nombrePaciente == null || nombrePaciente.isBlank() || nombrePaciente.isEmpty()) ? "" : nombrePaciente;
+                String apellidoQuery= (apellidoPaciente == null || apellidoPaciente.isBlank() || apellidoPaciente.isEmpty()) ? "" : apellidoPaciente;
+
+                System.out.println(nombrePaciente + " " + apellidoPaciente);
+                System.out.println(nombreQuery + " " + apellidoQuery);
+
+                List<Paciente> pacientes = new ArrayList<>();
+                pacientes.addAll(repositorioPacientes.findPacientesByNombrePacienteContainsIgnoreCaseOrApellidoPacienteContainingIgnoreCase(nombreQuery, apellidoQuery).stream().collect(Collectors.toList()));
+
+
+                if(!pacientes.isEmpty()){
+                    return new ResponseEntity<>(pacientes.stream().distinct().collect(Collectors.toList()), HttpStatus.OK);
+                }
+            }
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/id")
     ResponseEntity<Paciente> buscaPorId(@RequestParam Integer idPaciente){
         try {
-            Optional<Paciente> paciente = repositorioPacientes.pacienteConHistoria(idPaciente);
+            Optional<Paciente> paciente = repositorioPacientes.findById(idPaciente);
 
             if(paciente.isPresent()){
                 return new ResponseEntity<>(paciente.get(), HttpStatus.OK);
@@ -109,9 +135,9 @@ public class ControladorPaciente {
 
             if(ultimaCopia.isPresent()){
                 repositorioPacientes.deleteById(idPaciente);
-                return new ResponseEntity<>(ultimaCopia.get(), HttpStatus.OK);
+                return new ResponseEntity<>(null, HttpStatus.OK);
             }else{
-                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+                throw new Exception("Paciente no encontrado");
             }
         }catch (Exception e){
             e.printStackTrace();

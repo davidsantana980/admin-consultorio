@@ -21,17 +21,30 @@ export default function PacienteModal(props = {
     })
 
     const {modoForm, setModoForm} = props
+    const UltimaCita = () => {
+        if(!!paciente && !!paciente.citas && !!paciente.citas.length){
+            const ultimaCita = new Date(Math.max(...paciente.citas.map(cita => new Date(cita.fechaCita))));
+            return(
+                <ListGroup.Item className="text-white bg-info">
+                    Ultima cita: {ultimaCita.toLocaleDateString('es-US', {timeZone: 'UTC'})}
+                </ListGroup.Item>
+            )
+        }else{
+            return 
+        }
+    };
 
     const PacienteInfo = () => {
         return (
             <Card>
-                <Card.Header>
-                    <Card.Title className="my-2">
-                        {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`}
+                <Link className="card-header" to={`/paciente/${paciente.idPaciente}`} replace>
+                    <Card.Title className="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover my-2">
+                        {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`} 
                     </Card.Title>
-                </Card.Header>
+                </Link>
                 <Card.Body>
                     <ListGroup>
+                        <UltimaCita />
                         <ListGroup.Item>
                             <Card.Text>
                                 C.I: {paciente.cedulaPaciente}
@@ -54,10 +67,7 @@ export default function PacienteModal(props = {
                                     <Link className="btn btn-primary mx-2" to={`/paciente/${paciente.idPaciente}`} replace >
                                         Citas y estudios
                                     </Link>
-                                    {/* <Button className="mx-2">
-                                        Agregar cita
-                                    </Button> */}
-                                    </Container>
+                                </Container>
                             </Card.Link>
                         </ListGroup.Item>
                     </ListGroup>

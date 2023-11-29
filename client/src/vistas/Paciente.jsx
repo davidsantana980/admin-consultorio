@@ -50,7 +50,7 @@ class ClasePaciente extends React.Component{
             })
             .then(res => {
                 if(res.ok){
-                    window.location.reload()
+                    this.nav("/", {replace : true})
                 }else{
                     throw new Error("no se pudo borrar el paciente")
                 }
@@ -76,7 +76,7 @@ class ClasePaciente extends React.Component{
             .catch(e => {
                 return this.nav("/", {replace : true})
             })
-            
+
         }catch(e){
             return this.nav("/", {replace : true})
         }
@@ -106,7 +106,7 @@ class ClasePaciente extends React.Component{
                 ...this.state,
                 advertenciaModal : {
                     mensaje : "¿Seguro de que quieres borrar este paciente?", 
-                    funcion : () => borraPaciente(paciente.idPaciente),
+                    funcion : () => this.borraPaciente(paciente.idPaciente),
                     show : true
                 }
             })
@@ -133,74 +133,120 @@ class ClasePaciente extends React.Component{
             })
         }
 
+        const UltimaCita = () => {
+            if(!!paciente && !!paciente.citas && !!paciente.citas.length){
+                const ultimaCita = new Date(Math.max(...paciente.citas.map(cita => new Date(cita.fechaCita))));
+                return(
+                    <ListGroup.Item className="text-white bg-info">
+                        Ultima cita: {ultimaCita.toLocaleDateString('es-US', {timeZone: 'UTC'})}
+                    </ListGroup.Item>
+                )
+            }else{
+                return 
+            }
+        };
+
+        const DatosDelPaciente = (props = {className : ""}) => {
+            return (
+                <Container {...props}>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title className="d-flex justify-content-between align-items-center">
+                                Datos personales
+                                <Button size="sm" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true, modoForm :true}})}>
+                                    Cambiar datos
+                                </Button>
+                            </Card.Title>
+                            <ListGroup className="mt-3">
+                                <UltimaCita />
+                                {
+                                    !!paciente.cedulaPaciente && <ListGroup.Item className="list-group-item">Cédula: {paciente.cedulaPaciente}</ListGroup.Item>
+                                }
+                                {
+                                    !!paciente.telefonoPaciente && <ListGroup.Item className="list-group-item">Teléfono: {paciente.telefonoPaciente}</ListGroup.Item>
+                                }
+                            </ListGroup>
+                        </Card.Body>
+                        <Card.Footer>
+                            <ButtonGroup className="w-100">
+                                {
+                                    paciente.historia ?
+                                        <>
+                                            <Button onClick={() => this.handleDescarga(paciente)}>
+                                                Descargar historia
+                                            </Button>
+                                            <Button className="border" variant="light" onClick={() => this.setState({historiaModal : {paciente : paciente, rewrite : true, show : true}})}>
+                                                Modificar historia
+                                            </Button>
+                                            <Button variant="danger" onClick={setBorraHistoria}>
+                                                Borrar historia
+                                            </Button>
+                                        </>
+                                    :
+                                    <Button onClick={() => this.setState({historiaModal : {paciente : paciente, show : true}})}>
+                                        Agregar historia
+                                    </Button>
+                                }
+                            </ButtonGroup>
+                        </Card.Footer>
+                    </Card>
+                </Container>
+            )
+        }
+
+        const Botonera = (props = {size : undefined, className : ""}) => {
+            return (
+                <div className={props.className}>
+                    <ButtonGroup className="w-100 mt-2">
+                        <Button size={props.size} onClick={setAgregarCita}>Agregar cita</Button>
+                    </ButtonGroup>
+                    <ButtonGroup className="w-100 mt-2">
+                        <Button size={props.size} variant="danger" onClick={setBorraPaciente}>Borrar paciente</Button>
+                    </ButtonGroup>
+                </div>
+            )
+        }
+
+        const Body = () => {
+            if(!!paciente.citas.length){
+                return (
+                    <Row className="mt-2">
+                        <Col lg={8}>
+                            <CitasPaciente citas={paciente.citas} />
+                        </Col>
+                        <Col lg={4}>
+                            <Row>
+                                <DatosDelPaciente/>
+                                <Botonera/>
+                            </Row>
+                        </Col>
+                    </Row>
+                )
+            }else{
+                return (
+                    <Row>
+                        <Col lg={8}>
+                            <Row>
+                                <Botonera size={"lg"} className="mb-3 w-100"/>
+                            </Row>
+                        </Col>
+                        <Col lg={4}>
+                            <Row>
+                                <DatosDelPaciente className="mt-2"/>
+                            </Row>
+                        </Col>
+                    </Row>
+                )
+            }
+        }
+
         return(
             <Container>
-                {/* <Container> */}
-                    <h1 className="display-3">
-                        {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`}
-                    </h1>
-                    <hr/>
-                {/* </Container> */}
-                <Row>
-                    <Col lg={8}>
-                        {/* <Container> */}
-                            <CitasPaciente citas={paciente.citas} />
-                        {/* </Container> */}
-                    </Col>
-                    <Col lg={4}>
-                        <Row>
-                            <Container>
-                                <Card className="mt-2">
-                                    <Card.Body>
-                                        <Card.Title className="d-flex justify-content-between align-items-center">
-                                            Datos personales
-                                            <Button size="sm" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true, modoForm :true}})}>
-                                                Cambiar datos
-                                            </Button>
-                                        </Card.Title>
-                                        <ListGroup className="mt-3">
-                                            {
-                                                !!paciente.cedulaPaciente && <ListGroup.Item className="list-group-item">Cédula: {paciente.cedulaPaciente}</ListGroup.Item>
-                                            }
-                                            {
-                                                !!paciente.telefonoPaciente && <ListGroup.Item className="list-group-item">Teléfono: {paciente.telefonoPaciente}</ListGroup.Item>
-                                            }
-                                        </ListGroup>
-                                    </Card.Body>
-                                    <Card.Footer>
-                                        <ButtonGroup className="w-100">
-                                            {
-                                                paciente.historia ?
-                                                    <>
-                                                        <Button onClick={() => this.handleDescarga(paciente)}>
-                                                            Descargar historia
-                                                        </Button>
-                                                        <Button className="border" variant="light" onClick={() => this.setState({historiaModal : {paciente : paciente, rewrite : true, show : true}})}>
-                                                            Modificar historia
-                                                        </Button>
-                                                        <Button variant="danger" onClick={setBorraHistoria}>
-                                                            Borrar historia
-                                                        </Button>
-                                                    </>
-                                                :
-                                                <Button onClick={() => this.setState({historiaModal : {paciente : paciente, show : true}})}>
-                                                    Agregar historia
-                                                </Button>
-                                            }
-                                        </ButtonGroup>
-                                    </Card.Footer>
-                                        {/* <ListGroup.Item className="list-group-item">{paciente.historia}</ListGroup.Item> */}
-                                </Card>
-                            </Container>
-                            <ButtonGroup className="w-100 mt-2">
-                                <Button onClick={setAgregarCita}>Agregar cita</Button>
-                            </ButtonGroup>
-                            <ButtonGroup className="mt-2">
-                                <Button variant="danger" onClick={setBorraPaciente}>Borrar paciente</Button>
-                            </ButtonGroup>
-                        </Row>
-                    </Col>
-                </Row>
+                <h1 className="display-4">
+                    {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`}
+                </h1>
+                <hr className="mt-2" />
+                <Body />
                 <AdvertenciaModal
                     mensaje={this.state.advertenciaModal.mensaje}
                     show = {this.state.advertenciaModal.show}

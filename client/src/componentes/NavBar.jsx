@@ -1,7 +1,12 @@
+import { useState } from "react"
 import { Button, Container, Form, FormGroup, Nav, NavDropdown, Navbar, NavbarCollapse } from "react-bootstrap"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+
 
 export default function NavBar(){
+    const [pacienteQuery, setPacienteQuery] = useState("");
+    const nav = useNavigate()
+
     return(
         <Navbar expand="lg" sticky="top" bg="dark" variant='dark' className='mb-2'>
             <Container>
@@ -14,25 +19,21 @@ export default function NavBar(){
                 <Navbar.Collapse>
                     <Nav>
                         <Nav.Item>
-                            <Nav.Link>
-                                <Link to={"/agregar-paciente"} style={{textDecoration : "none", color:"white"}}>Agregar paciente</Link>
-                            </Nav.Link>
+                            <Link to={"/agregar-paciente"} className="nav-link" >Agregar paciente</Link>
                         </Nav.Item>
                         <Nav.Item>
                         <NavDropdown
                             title="Buscar paciente"
                             menuVariant="dark"
                         >
-                            <NavDropdown.Item>
-                                <Form id="buscarProducto" >
-                                    <FormGroup className="mb-2">
-                                        <Form.Control type="text" name="nombre" placeholder="Paciente" />
-                                    </FormGroup>       
-                                    <Container fluid className="d-grid mt-1">
-                                        <Button type="submit">Buscar</Button>
-                                    </Container>
-                                </Form>
-                            </NavDropdown.Item>   
+                            <Form action="/resultados" id="buscarProducto" className="mx-2 text-center">
+                                <FormGroup className="mb-2">
+                                    <Form.Control type="text" name="nombre" value={pacienteQuery} onChange={(evt) => setPacienteQuery(evt.target.value)} placeholder="Paciente" />
+                                </FormGroup>       
+                                <Button className="btn btn-primary w-100" type="submit">
+                                    Buscar
+                                </Button>
+                            </Form>
                         </NavDropdown>
                         </Nav.Item>
                         <Nav.Item>
