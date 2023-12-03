@@ -3,6 +3,8 @@ package com.consultorio.api.modelos;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
@@ -16,10 +18,23 @@ public class Usuario {
     @Column(name = "pass")
     String pass;
 
+    @Transient
+    private List<String> roles;
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
     public Usuario() {
     }
 
     public Usuario(String nombre, String pass) {
+        this.nombre = nombre;
+        this.pass = pass;
     }
 
     public Integer getId() {

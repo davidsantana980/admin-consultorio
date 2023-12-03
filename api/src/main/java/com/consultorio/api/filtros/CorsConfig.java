@@ -1,4 +1,4 @@
-package com.consultorio.api.cors;
+package com.consultorio.api.filtros;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
