@@ -3,9 +3,10 @@ import { Container , Card, Button, Col, Row, ButtonGroup} from "react-bootstrap"
 import PacienteModal from "../modales/PacienteModal";
 import { Link } from "react-router-dom";
 import HistoriaModal from "../modales/HistoriaModal";
-import { descargarArchivo } from "../utilidades/funciones";
+import { borraTokenIfUnauth, descargarArchivo, tokenHeader } from "../utilidades/funciones";
 import { pacienteModelo } from "../utilidades/modelos";
 import AgregarCitaModal from "../modales/AgregarCitaModal";
+// import instance from "../utilidades/axiosConfig"
 
 export default class Index extends Component {
     constructor(props){
@@ -32,9 +33,13 @@ export default class Index extends Component {
 
     fetchPacientes(){
         try{
-            fetch("http://localhost:8080/api/pacientes/busca-todo")
+            fetch("http://localhost:8080/api/pacientes/busca-todo", tokenHeader)
             .then(res => {
-                return res.json()
+                borraTokenIfUnauth(res)
+
+                if(!!res.ok){
+                    return res.json()
+                }
             })
             .then((resJson = []) => {
                 if(!!resJson.length){

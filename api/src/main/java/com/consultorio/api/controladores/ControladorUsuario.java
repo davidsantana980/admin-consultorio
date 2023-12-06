@@ -30,6 +30,17 @@ public class ControladorUsuario {
         this.authenticationManager = authenticationManager;
     }
 
+    @GetMapping()
+    public  ResponseEntity<String> chequeo(){
+        try {
+            return ResponseEntity.ok("");
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body("error inesperado");
+        }
+    }
+
     @PostMapping("/crear")
     public ResponseEntity<String> crearUsuario(@RequestBody UsuarioRequest usuario) {
         Usuario usuarioACrear = new Usuario(usuario.getUsername(), usuario.getPassword());

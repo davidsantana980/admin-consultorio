@@ -4,13 +4,17 @@ import { citaModelo, estudioModelo, pacienteModelo } from "../utilidades/modelos
 import EstudioModal from "../modales/EstudioModal.jsx";
 import AgregarEstudioModal from "../modales/AgregarEstudioModal.jsx";
 import AdvertenciaModal from "../modales/AdvertenciaModal.jsx";
+import { borraTokenIfUnauth, tokenHeader } from "../utilidades/funciones.js";
 
 function borraCita(idCita = 0){
     try{
         fetch(`http://localhost:8080/api/citas?idCita=${idCita}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            ...tokenHeader
         })
         .then(res => {
+            borraTokenIfUnauth(res);
+
             if(res.ok){
                 window.location.reload()
             }else{

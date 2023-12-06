@@ -3,6 +3,7 @@ import { Button, ButtonGroup, ButtonToolbar, Card, CardGroup, Col, Container, Ro
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom"
 import { pacienteModelo } from "../utilidades/modelos";
 import PacienteModal from "../modales/PacienteModal";
+import { tokenHeader, borraTokenIfUnauth } from "../utilidades/funciones";
 
 class ListaPacientesClass extends Component{
     constructor(props = {query : ""}) {
@@ -42,8 +43,10 @@ class ListaPacientesClass extends Component{
             apellidoPaciente =splitQuery[0] 
         }
 
-        return fetch(`http://localhost:8080/api/pacientes?nombrePaciente=${nombrePaciente}&apellidoPaciente=${apellidoPaciente}`)
+        return fetch(`http://localhost:8080/api/pacientes?nombrePaciente=${nombrePaciente}&apellidoPaciente=${apellidoPaciente}`, tokenHeader)
         .then(res => {
+            borraTokenIfUnauth(res)
+
             if(res.ok && res.status != 204){
                 return res.json()
             }else{

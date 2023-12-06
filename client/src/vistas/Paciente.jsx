@@ -4,11 +4,10 @@ import { Button, ButtonGroup, Card, Col, Container, ListGroup, Row } from "react
 import CitasPaciente from "../componentes/Citas.jsx";
 import { useNavigate, useParams } from "react-router";
 import AdvertenciaModal from "../modales/AdvertenciaModal.jsx";
-import { borraHistoria, descargarArchivo } from "../utilidades/funciones.js";
+import { borraHistoria, borraTokenIfUnauth, descargarArchivo, tokenHeader } from "../utilidades/funciones.js";
 import HistoriaModal from "../modales/HistoriaModal";
 import PacienteModal from "../modales/PacienteModal.jsx";
 import AgregarCitaModal from "../modales/AgregarCitaModal.jsx";
-import { Link } from "react-router-dom";
 
 class ClasePaciente extends React.Component{
     constructor(props = {
@@ -46,9 +45,12 @@ class ClasePaciente extends React.Component{
     borraPaciente(idPaciente = 0){
         try{
             fetch(`http://localhost:8080/api/pacientes?idPaciente=${idPaciente}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                ...tokenHeader
             })
             .then(res => {
+                borraTokenIfUnauth(res)
+
                 if(res.ok){
                     this.nav("/", {replace : true})
                 }else{
@@ -62,10 +64,12 @@ class ClasePaciente extends React.Component{
     
     fetchPaciente(){
         try{
-            if(!parseInt(this.idPaciente)) throw new Error("9903094182h")
+            if(!parseInt(this.idPaciente)) throw new Error()
             
-            fetch(`http://localhost:8080/api/pacientes/id?idPaciente=${this.idPaciente}`)
+            fetch(`http://localhost:8080/api/pacientes/id?idPaciente=${this.idPaciente}`, tokenHeader)
             .then(res => {
+                borraTokenIfUnauth(res)
+
                 if (res.status == 204 || !res.ok) throw new Error()
                 return res.json()
             })

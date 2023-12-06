@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Container, Form, InputGroup } from "react-bootstrap";
-import {enviarHistoria} from "../utilidades/funciones"
+import {borraTokenIfUnauth, enviarHistoria, tokenHeader} from "../utilidades/funciones"
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { useNavigate } from "react-router";
 class AgregarPacienteClass extends React.Component{
@@ -43,11 +43,15 @@ class AgregarPacienteClass extends React.Component{
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ...tokenHeader.headers
                 },              
+//                credentials : "include",
                 body : JSON.stringify(paciente)
             })
             .then(res => {
+                borraTokenIfUnauth(res)
+
                 if(res.ok){
                     return res.json()
                 }

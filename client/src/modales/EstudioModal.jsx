@@ -1,5 +1,6 @@
 import { Button, Card, Container, ListGroup, Modal } from "react-bootstrap";
 import { estudioModelo } from "../utilidades/modelos";
+import { tokenHeader, borraTokenIfUnauth } from "../utilidades/funciones";
 import { descargarArchivo } from "../utilidades/funciones";
 import { useState } from "react";
 import AdvertenciaModal from "./AdvertenciaModal";
@@ -26,9 +27,12 @@ export default function EstudioModal(props = {
     const borrarEstudio = (idEstudio = 0) => {
         try{
             fetch(`http://localhost:8080/api/citas/estudios?idEstudio=${idEstudio}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                ...tokenHeader
             })
             .then(res => {
+                borraTokenIfUnauth(res)
+
                 if(res.ok){
                     window.location.reload()
                 }else{

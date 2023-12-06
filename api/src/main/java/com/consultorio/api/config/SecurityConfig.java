@@ -1,5 +1,6 @@
 package com.consultorio.api.config;
 import com.consultorio.api.filtros.SecurityFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +27,9 @@ public class SecurityConfig {
     private final BCryptPasswordEncoder encoder;
     private final ExcepcionUsuarioNoAutorizado authenticationEntryPoint;
     private final SecurityFilter secFilter;
+
+    @Autowired
+    private CorsConfigurationSource corsConfigurer;
 
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService, BCryptPasswordEncoder encoder, ExcepcionUsuarioNoAutorizado authenticationEntryPoint, SecurityFilter secFilter) {
@@ -36,6 +42,7 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurer))
                 .authenticationManager(authenticationManager())
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/crear").permitAll()

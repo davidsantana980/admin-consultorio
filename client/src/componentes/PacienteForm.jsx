@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button, Card, Container, Form, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { pacienteModelo } from "../utilidades/modelos";
+import { borraTokenIfUnauth, tokenHeader } from "../utilidades/funciones";
 
 function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo){
     try{
@@ -14,9 +15,12 @@ function editarPaciente(idPaciente = 0, pacienteAModificar = pacienteModelo){
 
         return fetch(`http://localhost:8080/api/pacientes?idPaciente=${idPaciente}`, {
             method: 'PUT',
-            body : formdata
+            body : formdata,
+            ...tokenHeader
         })
         .then(res => {
+            borraTokenIfUnauth(res)
+
             if(res.ok){
                 return res.ok;                
                 // return <Redirect to={"/paciente"} state={{...paciente}} />

@@ -3,6 +3,7 @@ import { Card, Modal } from "react-bootstrap";
 import { useState } from "react";
 import AgregarEstudioForm from "../componentes/AgregarEstudioForm";
 import { useNavigate } from "react-router";
+import { tokenHeader, borraTokenIfUnauth } from "../utilidades/funciones";
 
 export default function AgregarCitaModal(props = {
     show : false,
@@ -18,6 +19,7 @@ export default function AgregarCitaModal(props = {
 
         let requestOptions = {
             method: 'POST',
+            ...tokenHeader
         };   
 
         if((estudioAux != null) && (estudioAux.tipoDeEstudio == 1 || estudioAux.tipoDeEstudio == 2) && !!estudioAux.archivoEstudio.length){
@@ -29,6 +31,8 @@ export default function AgregarCitaModal(props = {
         }
 
         let res = await fetch(`http://localhost:8080/api/citas?idPaciente=${paciente.idPaciente}`, requestOptions)
+
+        borraTokenIfUnauth(res)
 
         if(res.ok) return estaEnPaciente ? window.location.reload() : nav(`/paciente/${paciente.idPaciente}`)
         

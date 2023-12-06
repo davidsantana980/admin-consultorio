@@ -2,6 +2,7 @@ import { useState } from "react";
 import { estudioAuxModelo, estudioModelo } from "../utilidades/modelos";
 import { Button, Card, ListGroup, Modal, Form, InputGroup , Container} from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
+import { borraTokenIfUnauth, tokenHeader } from "../utilidades/funciones";
 
 function editarEstudio(idEstudio = 0, estudioAux = estudioAuxModelo){
     try{
@@ -12,15 +13,17 @@ function editarEstudio(idEstudio = 0, estudioAux = estudioAuxModelo){
         if(!!estudioAux.archivoEstudio.length) formdata.append("archivoEstudio", estudioAux.archivoEstudio[0]);
 
         return fetch(`http://localhost:8080/api/citas/estudios?idEstudio=${idEstudio}`, {
-            // headers: {
-            //     "Content-Type": "multipart/form-data",
-            //     // 'Content-Type': 'application/x-www-form-urlencoded',
-            // },
+            ...tokenHeader,
             method: "PUT",
             body: formdata,
-            // redirect: 'follow'
         })
-        .then(res => res.json())
+        .then(res => {
+            borraTokenIfUnauth(res)
+
+            if(res.ok){
+                return res.json();
+            }
+        })
         .then(result => {
             // console.log(result)
             return result
