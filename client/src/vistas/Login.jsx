@@ -17,7 +17,6 @@ export default class Login extends React.Component{
   handleSubmit = (e) => {
     e.preventDefault();
   
-    
     if(!Object.values(this.state.usuario).every(valor => !!valor)){
       return this.setState({error : "Datos incompletos"})
     }
@@ -54,7 +53,7 @@ export default class Login extends React.Component{
       <Container className="my-4">
         <Form >
           <Form.Label className="display-4" >
-            Inicio de Sesion
+            Inicio de sesión
             <hr/>
           </Form.Label>              
             {
@@ -64,7 +63,7 @@ export default class Login extends React.Component{
               </Alert>
             }
 
-            <Form.Control type="text" placeholder="Usuario" required name="username" value={this.state.username} onChange={(evt) => this.setState({usuario : {...this.state.usuario, username : evt.target.value}})} />  
+            <Form.Control type="text" placeholder="Usuario" className="mb-1" required name="username" value={this.state.username} onChange={(evt) => this.setState({usuario : {...this.state.usuario, username : evt.target.value}})} />  
             <Form.Control type="text" placeholder="Contraseña" required name="password" value={this.state.password} onChange={(evt) => this.setState({usuario : {...this.state.usuario, password : evt.target.value}})} />
 
             <Form.Control type="submit" onClick={this.handleSubmit} className="mt-2" as={Button}>
