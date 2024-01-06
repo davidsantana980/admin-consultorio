@@ -80,6 +80,8 @@ class ListaPacientesClass extends Component{
     render(){        
         if(!this.state.cargando){
             let Pacientes = () => this.state.pacientes.map((paciente, index) => {
+                const ultimaCita = (paciente.citas && !!paciente.citas.length) ? new Date(Math.max(...paciente.citas.map(cita => new Date(cita.fechaCita)))) : 0;
+
                 return (
                         <Container fluid key={index} className="mb-2">
                             <Card key={index} className="text-center">
@@ -89,13 +91,15 @@ class ListaPacientesClass extends Component{
                                             <Container fluid>
                                                 <Card.Title className="d-grid gap-2">
                                                     <ButtonToolbar className="text-justify-center">
-                                                        <Button style={{width:"70%"}} className="mt-2 stretched-link btn-lg shadow-none btn-light" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
+                                                        <Button style={!!ultimaCita ? {width:"70%"} : {width:"100%"}} className="mt-2 stretched-link btn-lg shadow-none btn-light" onClick={() => this.setState({pacienteModal : {paciente : paciente, show : true}})}>
                                                             {`${paciente.nombrePaciente} ${paciente.apellidoPaciente}`}
                                                         </Button>
-                                                        <p style={{width:"30%"}}>
-                                                            aosao
-                                                            eqwe
-                                                        </p>
+                                                        {
+                                                            !!ultimaCita &&
+                                                            <p className="my-3" style={{width:"30%"}}>
+                                                                Ultima cita: {ultimaCita.toLocaleDateString('es-US', {timeZone: 'UTC'})}
+                                                            </p>
+                                                        }
                                                     </ButtonToolbar>
                                                 </Card.Title>
                                             </Container>    
