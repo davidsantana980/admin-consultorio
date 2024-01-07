@@ -58,9 +58,12 @@ export default function PacienteModal(props = {
                         <ListGroup.Item>
                             <Card.Link>
                                 <Container className="d-flex justify-content-center">
-                                    <Button variant="danger" className="mx-2" onClick={setBorraHistoria}>
-                                        Borrar historia
-                                    </Button>
+                                    {
+                                        !!paciente.historia && !!paciente.historia.idHistoria &&
+                                        <Button variant="danger" className="mx-2" onClick={setBorraHistoria}>
+                                            Borrar historia
+                                        </Button>
+                                    }
                                     <Button variant="secondary" onClick={() => setModoForm(true)} className="mx-2">
                                         Editar datos
                                     </Button>

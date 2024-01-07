@@ -64,7 +64,7 @@ export default class Login extends React.Component{
             }
 
             <Form.Control type="text" placeholder="Usuario" className="mb-1" required name="username" value={this.state.username} onChange={(evt) => this.setState({usuario : {...this.state.usuario, username : evt.target.value}})} />  
-            <Form.Control type="text" placeholder="Contraseña" required name="password" value={this.state.password} onChange={(evt) => this.setState({usuario : {...this.state.usuario, password : evt.target.value}})} />
+            <Form.Control type="password" placeholder="Contraseña" required name="password" value={this.state.password} onChange={(evt) => this.setState({usuario : {...this.state.usuario, password : evt.target.value}})} />
 
             <Form.Control type="submit" onClick={this.handleSubmit} className="mt-2" as={Button}>
               Iniciar sesión
