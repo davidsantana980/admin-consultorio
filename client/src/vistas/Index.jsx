@@ -13,7 +13,7 @@ export default class Index extends Component {
         super(props);
         this.state={
             pacientes : [],
-            cargando : true,
+            mensaje : "Cargando...",
             pacienteModal : {
                 paciente : {},
                 modoForm : false,
@@ -39,15 +39,18 @@ export default class Index extends Component {
 
                 if(!!res.ok){
                     return res.json()
+                }else{
+                    throw new Error()
                 }
             })
             .then((resJson = []) => {
                 if(!!resJson.length){
-                    this.setState({pacientes : resJson, cargando : false})
+                    this.setState({pacientes : resJson})
                 }else{
-                    return //this.nav("/agregar-paciente", {replace : true})
+                    this.setState({mensaje : "No hay pacientes para mostrar."})
                 }
             })
+            .catch(e => this.setState({mensaje : "No hay pacientes para mostrar."}))
         }catch(e){
             console.log(e);
         }
@@ -70,7 +73,7 @@ export default class Index extends Component {
     }
 
     render(){
-        const {cargando, pacientes} = this.state;
+        const {mensaje, pacientes} = this.state;
 
         let Pacientes = () => pacientes.map((paciente) => {
                 return ( 
@@ -113,11 +116,11 @@ export default class Index extends Component {
                 )
             })
 
-        if(cargando){
+        if(!pacientes.length){
             return (
                 <Container fluid className="col-lg-8">
                     <h1 className="display-4 mt-2 text-center">
-                        Cargando...
+                        {mensaje}
                     </h1>
                     <hr/>
                 </Container>
