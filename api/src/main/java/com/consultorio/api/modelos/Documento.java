@@ -2,6 +2,9 @@ package com.consultorio.api.modelos;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Documento {
     MultipartFile archivo;
     String nombre;
@@ -31,6 +34,7 @@ public class Documento {
     }
 
     public void ajustaNombreParaGuardar(){
+//        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(new Date());
         this.nombre = this.archivo.getOriginalFilename().replaceAll("\\s+", "_");
     }
 }

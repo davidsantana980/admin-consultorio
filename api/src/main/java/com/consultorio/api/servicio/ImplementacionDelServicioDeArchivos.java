@@ -29,22 +29,17 @@ public class ImplementacionDelServicioDeArchivos implements ServicioDeArchivos{
         }
     }
 
-    private void guardarArchivo(Documento documento){
-        try {
-//            Files.copy(archivo.getInputStream(), this.raiz.resolve(archivo.getOriginalFilename()));
-            Files.write(this.raiz.resolve(documento.getNombre()), documento.getArchivo().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public String guardar(Documento archivo, Class<?> claseDelControlador, String nombreDelMetodo) {
         try {
             archivo.ajustaNombreParaGuardar();
-            this.guardarArchivo(archivo);
+
+            //guardar archivo
+            Files.write(this.raiz.resolve(archivo.getNombre()), archivo.getArchivo().getBytes());
 
             String nuevoNombre = archivo.getNombre();
+
+            //retornar url
             return MvcUriComponentsBuilder.fromMethodName(claseDelControlador, nombreDelMetodo, nuevoNombre).build().toString();
         } catch (Exception e) {
             throw new RuntimeException(e);

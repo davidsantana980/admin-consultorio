@@ -1,5 +1,6 @@
 package com.consultorio.api.modelos;
 
+import com.consultorio.api.servicio.ImplementacionDelServicioDeArchivos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -81,5 +82,15 @@ public class Historia {
 
     public void setNombreDocumentoHistoria(String nombreDocumentoHistoria) {
         this.nombreDocumentoHistoria = nombreDocumentoHistoria;
+    }
+
+    @PreRemove
+    public void borraDocumentoHistoria(){
+        String nombre = this.getNombreDocumentoHistoria();
+
+        ImplementacionDelServicioDeArchivos servicioDeArchivos = new ImplementacionDelServicioDeArchivos();
+        servicioDeArchivos.init("Historias");
+
+        servicioDeArchivos.borrar(nombre);
     }
 }

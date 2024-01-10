@@ -27,7 +27,7 @@ public class Paciente {
     @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL)
     private Historia historia;
 
-    @OneToMany(mappedBy = "paciente")
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private List<Cita> citas;
 
     public List<Cita> getCitas() {
