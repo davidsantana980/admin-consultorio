@@ -1,5 +1,6 @@
 package com.consultorio.api.modelos;
 
+import com.consultorio.api.servicio.ImplementacionDelServicioDeArchivos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -26,7 +27,7 @@ public class Cita {
     @JsonIgnore
     private Paciente paciente;
 
-    @OneToMany(mappedBy = "cita")
+    @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL)
     private List<Estudio> estudios;
 
     public List<Estudio> getEstudios() {
@@ -47,6 +48,17 @@ public class Cita {
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
         this.idPaciente = paciente.getIdPaciente();
+    }
+
+    @PreRemove
+    public void borraDocumentosEstudios(){
+        List<Estudio> estudios = this.getEstudios();
+        ImplementacionDelServicioDeArchivos servicioDeArchivos = new ImplementacionDelServicioDeArchivos();
+        servicioDeArchivos.init("Estudios");
+
+        estudios.forEach(estudio -> {
+            servicioDeArchivos.borrar(estudio.getNombreDocumentoEstudio());
+        });
     }
 
     public Integer getIdCita() {

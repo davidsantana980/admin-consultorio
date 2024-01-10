@@ -211,7 +211,6 @@ public class ControladorCita {
         try {
             Cita cita = repositorioCitas.findById(idCita).orElseThrow(() -> new Exception("Cita no hallada"));
 
-            if (!cita.getEstudios().isEmpty()) borraEstudiosPorCita(cita);
             repositorioCitas.deleteById(cita.getIdCita());
 
             return new ResponseEntity<>("cita borrada exitosamente", HttpStatus.OK);
@@ -236,14 +235,6 @@ public class ControladorCita {
         nuevoEstudio.setTipoDeEstudio(repositorioTiposDeEstudio.findById(estudio.getIdTipoEstudio()).get());
 
         return repositorioEstudios.save(nuevoEstudio);
-    }
-
-    private void borraEstudiosPorCita(Cita cita) throws Exception {
-        cita.getEstudios().forEach(estudio -> {
-            servicioDeArchivos.borrar(estudio.getNombreDocumentoEstudio());
-        });
-
-        repositorioEstudios.deleteAllByIdCita(cita.getIdCita());
     }
 
     private class EstudioAux{
